@@ -1,0 +1,369 @@
+{% extends "base.html" %}
+
+{% block title %}تشخيص جديد - DermaScan{% endblock %}
+
+{% block content %}
+<div class="main-container">
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="{{ url_for('dashboard') }}">
+                <i class="fas fa-stethoscope me-2"></i>
+                DermaScan
+            </a>
+            
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('dashboard') }}">
+                            <i class="fas fa-home me-1"></i>
+                            الرئيسية
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="{{ url_for('diagnosis') }}">
+                            <i class="fas fa-microscope me-1"></i>
+                            تشخيص جديد
+                        </a>
+                    </li>
+                    {% if session.get('user_type') == 'doctor' %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('cases') }}">
+                            <i class="fas fa-folder me-1"></i>
+                            سجل الحالات
+                        </a>
+                    </li>
+                    {% endif %}
+                    {% if session.get('user_type') == 'doctor' %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('statistics') }}">
+                            <i class="fas fa-chart-bar me-1"></i>
+                            الإحصائيات
+                        </a>
+                    </li>
+                    {% endif %}
+                </ul>
+                
+                <ul class="navbar-nav">
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown">
+                            <i class="fas fa-user-circle me-1"></i>
+                            {{ session.get('user_name', 'المستخدم') }}
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="{{ url_for('settings') }}">
+                                <i class="fas fa-cog me-2"></i>
+                                الإعدادات
+                            </a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('logout') }}">
+                                <i class="fas fa-sign-out-alt me-2"></i>
+                                تسجيل الخروج
+                            </a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    
+    <!-- Main Content -->
+    <div class="container-fluid p-4">
+        <div class="row justify-content-center">
+            <div class="col-lg-10">
+                
+                <!-- Upload Section -->
+                <div class="card mb-4">
+                    <div class="card-header text-center bg-primary text-white">
+                        <h3 class="mb-0">
+                            <i class="fas fa-microscope me-2"></i>
+                            تشخيص مرض جلدي جديد
+                        </h3>
+                    </div>
+                    <div class="card-body p-4">
+                        {% with messages = get_flashed_messages(with_categories=true) %}
+                            {% if messages %}
+                                {% for category, message in messages %}
+                                    <div class="alert alert-{{ 'danger' if category == 'error' else category }} alert-dismissible fade show" role="alert">
+                                        <i class="fas fa-{{ 'exclamation-triangle' if category == 'error' else 'check-circle' }} me-2"></i>
+                                        {{ message }}
+                                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                                    </div>
+                                {% endfor %}
+                            {% endif %}
+                        {% endwith %}
+                        
+                        <form method="POST" enctype="multipart/form-data" id="diagnosis-form">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="card">
+                                        <div class="card-header">
+                                            <h6 class="mb-0">
+                                                <i class="fas fa-image me-2"></i>
+                                                رفع صورة للجلد
+                                            </h6>
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="mb-3">
+                                                <label for="image-input" class="form-label">اختر صورة:</label>
+                                                <input type="file" name="image" id="image-input" accept="image/*" class="form-control" required>
+                                                <div class="form-text">
+                                                    الأنواع المدعومة: JPG, PNG, GIF, BMP (الحد الأقصى: 10MB)
+                                                </div>
+                                            </div>
+                                            
+                                            <div id="image-preview-section" style="display: none;">
+                                                <div class="text-center">
+                                                    <div id="image-preview" class="mb-3"></div>
+                                                    <button type="button" class="btn btn-outline-danger" id="remove-image">
+                                                        <i class="fas fa-trash me-2"></i>
+                                                        إزالة الصورة
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="col-md-6">
+                                    <div class="card">
+                                        <div class="card-header">
+                                            <h6 class="mb-0">
+                                                <i class="fas fa-lightbulb me-2"></i>
+                                                نصائح للحصول على تشخيص دقيق
+                                            </h6>
+                                        </div>
+                                        <div class="card-body">
+                                            <ul class="mb-0">
+                                                <li>تأكد من أن الصورة واضحة وذات جودة عالية</li>
+                                                <li>التقط الصورة في إضاءة جيدة</li>
+                                                <li>ركز على المنطقة المصابة بالجلد</li>
+                                                <li>تجنب الصور المظلمة أو المشوشة</li>
+                                                <li>تأكد من أن الصورة تحتوي على جلد واضح</li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="col-12 mt-3">
+                                    <div class="d-grid">
+                                        <button type="submit" class="btn btn-primary btn-lg" id="diagnose-btn">
+                                            <i class="fas fa-stethoscope me-2"></i>
+                                            <span id="btn-text">بدء التشخيص</span>
+                                            <span id="loading-spinner" style="display: none;">
+                                                <i class="fas fa-spinner fa-spin me-2"></i>
+                                                جاري التشخيص...
+                                            </span>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                
+                <!-- Diagnosis Results Section -->
+                {% if result %}
+                <div class="card mb-4" id="results-section">
+                    <div class="card-header text-center bg-success text-white">
+                        <h3 class="mb-0">
+                            <i class="fas fa-clipboard-check me-2"></i>
+                            تقرير التشخيص
+                        </h3>
+                    </div>
+                    <div class="card-body p-4">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="text-center mb-3">
+                                    <img src="{{ result.image_path }}" class="img-fluid rounded" style="max-height: 300px;" alt="الصورة المرفوعة">
+                                </div>
+                            </div>
+                            <div class="col-md-8">
+                                <div class="diagnosis-report">
+                                    <h4 class="text-primary mb-3">
+                                        <i class="fas fa-diagnosis me-2"></i>
+                                        نتيجة التشخيص
+                                    </h4>
+                                    
+                                    <!-- جدول احتمالات الأمراض -->
+                                    <div class="mb-4">
+                                        <h5 class="mb-2"><i class="fas fa-chart-bar me-2"></i> احتمالية كل مرض</h5>
+                                        <div class="table-responsive">
+                                            <table class="table table-bordered text-center align-middle">
+                                                <thead class="table-light">
+                                                    <tr>
+                                                        <th>المرض</th>
+                                                        <th>الاسم الإنجليزي</th>
+                                                        <th>النسبة (%)</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    {% for item in result.all_probs %}
+                                                    <tr {% if item.key == result.disease %}class="table-success"{% endif %}>
+                                                        <td><b>{{ item.name_ar }}</b></td>
+                                                        <td>{{ item.name_en }}</td>
+                                                        <td>
+                                                            <div class="progress" style="height: 20px;">
+                                                                <div class="progress-bar bg-{{ item.severity_color }}" role="progressbar" style="width: {{ item.prob }}%">{{ item.prob }}%</div>
+                                                            </div>
+                                                        </td>
+                                                    </tr>
+                                                    {% endfor %}
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                    <!-- نهاية الجدول -->
+                                    
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="card bg-light mb-3">
+                                                <div class="card-body">
+                                                    <h6 class="card-title">
+                                                        <i class="fas fa-disease me-2"></i>
+                                                        المرض المشخص
+                                                    </h6>
+                                                    <h4 class="text-primary mb-2">{{ result.disease_name_ar }}</h4>
+                                                    <p class="text-muted mb-0">{{ result.disease_name_en }}</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="card bg-light mb-3">
+                                                <div class="card-body">
+                                                    <h6 class="card-title">
+                                                        <i class="fas fa-percentage me-2"></i>
+                                                        نسبة الثقة
+                                                    </h6>
+                                                    <div class="progress mb-2">
+                                                        <div class="progress-bar bg-success" role="progressbar" 
+                                                             style="width: {{ result.confidence_percentage }}%" 
+                                                             aria-valuenow="{{ result.confidence_percentage }}" 
+                                                             aria-valuemin="0" aria-valuemax="100">
+                                                            {{ result.confidence_percentage }}%
+                                                        </div>
+                                                    </div>
+                                                    <small class="text-muted">{{ result.confidence }} من 1.0</small>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="card mb-3">
+                                        <div class="card-header">
+                                            <h6 class="mb-0">
+                                                <i class="fas fa-info-circle me-2"></i>
+                                                معلومات المرض
+                                            </h6>
+                                        </div>
+                                        <div class="card-body">
+                                            <p class="mb-2"><strong>الوصف:</strong> {{ result.disease_description }}</p>
+                                            <p class="mb-2"><strong>الخطورة:</strong> 
+                                                <span class="badge bg-{{ result.severity_color }}">{{ result.severity }}</span>
+                                            </p>
+                                            <p class="mb-0"><strong>التوصية:</strong> {{ result.recommendation }}</p>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="d-flex justify-content-between">
+                                        <button class="btn btn-outline-primary" onclick="window.print()">
+                                            <i class="fas fa-print me-2"></i>
+                                            طباعة التقرير
+                                        </button>
+                                        {% if result.pdf_report %}
+                                        <a href="{{ url_for('download_report', filename=result.pdf_report) }}" class="btn btn-outline-success">
+                                            <i class="fas fa-file-pdf me-2"></i>
+                                            تحميل تقرير PDF
+                                        </a>
+                                        {% endif %}
+                                        <a href="{{ url_for('diagnosis') }}" class="btn btn-primary">
+                                            <i class="fas fa-plus me-2"></i>
+                                            تشخيص جديد
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+                
+                <!-- Error Section -->
+                {% if error %}
+                <div class="card mb-4">
+                    <div class="card-header text-center bg-danger text-white">
+                        <h3 class="mb-0">
+                            <i class="fas fa-exclamation-triangle me-2"></i>
+                            خطأ في التشخيص
+                        </h3>
+                    </div>
+                    <div class="card-body p-4 text-center">
+                        <div class="alert alert-danger">
+                            <i class="fas fa-exclamation-circle me-2"></i>
+                            {{ error }}
+                        </div>
+                        <a href="{{ url_for('diagnosis') }}" class="btn btn-primary">
+                            <i class="fas fa-redo me-2"></i>
+                            المحاولة مرة أخرى
+                        </a>
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    console.log('=== DEBUG: تحميل JavaScript ===');
+    
+    // كود بسيط جدًا: الزر مفعّل دائمًا
+    const imageInput = document.getElementById('image-input');
+    const imagePreview = document.getElementById('image-preview');
+    const imagePreviewSection = document.getElementById('image-preview-section');
+    const removeBtn = document.getElementById('remove-image');
+    const diagnoseBtn = document.getElementById('diagnose-btn');
+    const btnText = document.getElementById('btn-text');
+    const loadingSpinner = document.getElementById('loading-spinner');
+    const diagnosisForm = document.getElementById('diagnosis-form');
+
+    imageInput.addEventListener('change', (e) => {
+        if (e.target.files.length > 0) {
+            const file = e.target.files[0];
+            const reader = new FileReader();
+            reader.onload = function(ev) {
+                imagePreview.innerHTML = `<img src="${ev.target.result}" class="img-fluid rounded" style="max-height: 400px;">`;
+                imagePreviewSection.style.display = 'block';
+            };
+            reader.readAsDataURL(file);
+        } else {
+            imagePreview.innerHTML = '';
+            imagePreviewSection.style.display = 'none';
+        }
+    });
+
+    if (removeBtn) {
+        removeBtn.addEventListener('click', () => {
+            imageInput.value = '';
+            imagePreview.innerHTML = '';
+            imagePreviewSection.style.display = 'none';
+        });
+    }
+
+    // إضافة مؤشر التحميل عند إرسال النموذج
+    if (diagnosisForm) {
+        diagnosisForm.addEventListener('submit', function() {
+            // إظهار مؤشر التحميل
+            btnText.style.display = 'none';
+            loadingSpinner.style.display = 'inline';
+            diagnoseBtn.disabled = true;
+            
+            // إضافة رسالة للمستخدم
+            console.log('جاري إرسال الصورة للتشخيص...');
+        });
+    }
+</script>
+{% endblock %} 

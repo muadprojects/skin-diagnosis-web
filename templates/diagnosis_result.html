@@ -1,0 +1,296 @@
+{% extends "base.html" %}
+
+{% block title %}نتيجة التشخيص - DermaScan{% endblock %}
+
+{% block content %}
+<!-- 
+صفحة نتيجة التشخيص - هنا بيتم عرض نتيجة تشخيص المرض الجلدي
+هذه الصفحة مهمة جداً لأنها بتعرض النتيجة للمستخدم
+-->
+
+<div class="main-container">
+    <!-- شريط التنقل -->
+    <nav class="navbar navbar-expand-lg">
+        <div class="container-fluid">
+            <!-- شعار التطبيق -->
+            <a class="navbar-brand" href="{{ url_for('dashboard') }}">
+                <i class="fas fa-stethoscope me-2"></i>
+                DermaScan
+            </a>
+            
+            <!-- زر القائمة للموبايل -->
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            
+            <!-- قائمة التنقل -->
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('dashboard') }}">
+                            <i class="fas fa-home me-1"></i>
+                            الرئيسية
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('diagnose') }}">
+                            <i class="fas fa-microscope me-1"></i>
+                            تشخيص جديد
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('cases') }}">
+                            <i class="fas fa-folder me-1"></i>
+                            سجل الحالات
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('statistics') }}">
+                            <i class="fas fa-chart-bar me-1"></i>
+                            الإحصائيات
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('settings') }}">
+                            <i class="fas fa-cog me-1"></i>
+                            الإعدادات
+                        </a>
+                    </li>
+                </ul>
+                
+                <!-- قائمة المستخدم -->
+                <ul class="navbar-nav">
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown">
+                            <i class="fas fa-user-circle me-1"></i>
+                            {{ session.get('user_name', 'المستخدم') }}
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="{{ url_for('settings') }}">
+                                <i class="fas fa-cog me-2"></i>
+                                الإعدادات
+                            </a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="{{ url_for('logout') }}">
+                                <i class="fas fa-sign-out-alt me-2"></i>
+                                تسجيل الخروج
+                            </a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    
+    <!-- المحتوى الرئيسي -->
+    <div class="container-fluid p-4">
+        <div class="row justify-content-center">
+            <div class="col-lg-10">
+                
+                <!-- نتيجة التشخيص -->
+                <div class="card mb-4">
+                    <div class="card-header text-center bg-success text-white">
+                        <h3 class="mb-0">
+                            <i class="fas fa-clipboard-check me-2"></i>
+                            تقرير التشخيص
+                        </h3>
+                    </div>
+                    <div class="card-body p-4">
+                        <div class="row">
+                            <!-- الصورة المرفوعة -->
+                            <div class="col-md-4">
+                                <div class="text-center mb-3">
+                                    <img src="{{ result.image_path }}" class="img-fluid rounded" style="max-height: 300px;" alt="الصورة المرفوعة">
+                                </div>
+                            </div>
+                            
+                            <!-- تفاصيل التشخيص -->
+                            <div class="col-md-8">
+                                <div class="diagnosis-report">
+                                    <h4 class="text-primary mb-3">
+                                        <i class="fas fa-diagnosis me-2"></i>
+                                        نتيجة التشخيص
+                                    </h4>
+                                    
+                                    <!-- المرض المشخص -->
+                                    <div class="mb-4">
+                                        <h5 class="mb-2">
+                                            <i class="fas fa-disease me-2"></i>
+                                            المرض المشخص
+                                        </h5>
+                                        <div class="alert alert-info">
+                                            <strong>{{ result.disease_arabic }}</strong>
+                                            <br>
+                                            <small class="text-muted">{{ result.disease }}</small>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- نسبة الثقة -->
+                                    <div class="mb-4">
+                                        <h5 class="mb-2">
+                                            <i class="fas fa-percentage me-2"></i>
+                                            نسبة الثقة في التشخيص
+                                        </h5>
+                                        <div class="progress mb-2" style="height: 25px;">
+                                            <div class="progress-bar 
+                                                {% if result.confidence >= 0.8 %}bg-success
+                                                {% elif result.confidence >= 0.6 %}bg-warning
+                                                {% else %}bg-danger{% endif %}" 
+                                                     role="progressbar" 
+                                                style="width: {{ result.confidence * 100 }}%">
+                                                {{ "%.1f"|format(result.confidence * 100) }}%
+                                            </div>
+                                        </div>
+                                        <small class="text-muted">
+                                            {% if result.confidence >= 0.8 %}
+                                                <i class="fas fa-check-circle text-success"></i> ثقة عالية جداً
+                                            {% elif result.confidence >= 0.6 %}
+                                                <i class="fas fa-exclamation-triangle text-warning"></i> ثقة متوسطة
+                                            {% else %}
+                                                <i class="fas fa-times-circle text-danger"></i> ثقة منخفضة
+                                            {% endif %}
+                                        </small>
+                                        </div>
+                                        
+                                    <!-- جميع الأمراض مع نسبها -->
+                                    {% if result.all_diseases %}
+                                    <div class="mb-4">
+                                        <h5 class="mb-3">
+                                            <i class="fas fa-list me-2"></i>
+                                            جميع الأمراض المحتملة
+                                        </h5>
+                                        <div class="table-responsive">
+                                            <table class="table table-striped table-hover">
+                                                <thead class="table-dark">
+                                                    <tr>
+                                                        <th>#</th>
+                                                        <th>المرض</th>
+                                                        <th>الاسم بالإنجليزية</th>
+                                                        <th>النسبة المئوية</th>
+                                                        <th>شريط التقدم</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    {% for disease in result.all_diseases %}
+                                                    <tr class="{% if loop.index == 1 %}table-success{% endif %}">
+                                                        <td>{{ loop.index }}</td>
+                                                        <td>
+                                                            <strong>{{ disease.arabic_name }}</strong>
+                                                            {% if loop.index == 1 %}
+                                                                <i class="fas fa-trophy text-warning ms-1" title="المرض الأكثر احتمالاً"></i>
+                                                            {% endif %}
+                                                        </td>
+                                                        <td><small class="text-muted">{{ disease.name }}</small></td>
+                                                        <td>
+                                                            <span class="badge 
+                                                                {% if disease.percentage >= 50 %}bg-success
+                                                                {% elif disease.percentage >= 20 %}bg-warning
+                                                                {% else %}bg-secondary{% endif %}">
+                                                                {{ "%.2f"|format(disease.percentage) }}%
+                                                            </span>
+                                                        </td>
+                                                        <td>
+                                                            <div class="progress" style="height: 20px;">
+                                                                <div class="progress-bar 
+                                                                    {% if disease.percentage >= 50 %}bg-success
+                                                                    {% elif disease.percentage >= 20 %}bg-warning
+                                                                    {% else %}bg-secondary{% endif %}" 
+                                                                    role="progressbar" 
+                                                                    style="width: {{ disease.percentage }}%"
+                                                                    title="{{ disease.arabic_name }}: {{ "%.2f"|format(disease.percentage) }}%">
+                                                                </div>
+                                                            </div>
+                                                        </td>
+                                                    </tr>
+                                                    {% endfor %}
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                        <small class="text-muted">
+                                            <i class="fas fa-info-circle me-1"></i>
+                                            الجدول يعرض جميع الأمراض السبعة المحتملة مرتبة حسب الاحتمالية
+                                        </small>
+                                    </div>
+                                    {% endif %}
+                                    
+                                    <!-- معلومات إضافية -->
+                                    <div class="mb-4">
+                                        <h5 class="mb-2">
+                                            <i class="fas fa-info-circle me-2"></i>
+                                            معلومات إضافية
+                                        </h5>
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <p><strong>تاريخ التشخيص:</strong><br>{{ result.timestamp }}</p>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <p><strong>نوع الحساب:</strong><br>مستخدم عادي</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- تنبيه مهم -->
+                                    <div class="alert alert-warning">
+                                        <i class="fas fa-exclamation-triangle me-2"></i>
+                                        <strong>تنبيه مهم:</strong> هذا التشخيص هو نتيجة تحليل آلي ولا يغني عن استشارة الطبيب المختص. 
+                                        يرجى مراجعة الطبيب للحصول على تشخيص دقيق وخطة علاج مناسبة.
+                                    </div>
+                                </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- أزرار الإجراءات -->
+                <div class="row">
+                            <div class="col-12">
+                                <div class="d-flex justify-content-center gap-3">
+                            <!-- تشخيص جديد -->
+                            <a href="{{ url_for('diagnose') }}" class="btn btn-primary">
+                                <i class="fas fa-microscope me-2"></i>
+                                        تشخيص جديد
+                                    </a>
+                                    
+                            <!-- العودة للرئيسية -->
+                            <a href="{{ url_for('dashboard') }}" class="btn btn-secondary">
+                                <i class="fas fa-home me-2"></i>
+                                العودة للرئيسية
+                            </a>
+                            
+                            <!-- طباعة التقرير -->
+                            <button onclick="window.print()" class="btn btn-info">
+                                <i class="fas fa-print me-2"></i>
+                                طباعة التقرير
+                            </button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                <!-- معلومات إضافية -->
+                        <div class="row mt-4">
+                            <div class="col-12">
+                        <div class="alert alert-info">
+                            <i class="fas fa-shield-alt me-2"></i>
+                            <strong>معلومات مهمة:</strong> جميع البيانات محمية ومشفرة. هذا التطبيق مخصص للأغراض التعليمية والبحثية فقط.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- JavaScript للتفاعل مع الصفحة -->
+<script>
+// طباعة التقرير
+function printReport() {
+    window.print();
+}
+
+// حفظ النتيجة
+function saveResult() {
+    // هنا يمكن إضافة كود لحفظ النتيجة
+    alert('تم حفظ النتيجة بنجاح');
+}
+</script>
+{% endblock %} 

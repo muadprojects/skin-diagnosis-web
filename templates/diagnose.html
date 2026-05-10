@@ -1,0 +1,324 @@
+{% extends "base.html" %}
+
+{% block title %}تشخيص جديد - DermaScan{% endblock %}
+
+{% block content %}
+<!-- 
+صفحة التشخيص الجديد - هنا المستخدم بيقدر يرفع صورة ويشخص المرض
+هذه الصفحة مهمة جداً لأنها اللي بتشخص الأمراض الجلدية
+-->
+
+<div class="main-container">
+    <!-- شريط التنقل -->
+    <nav class="navbar navbar-expand-lg">
+        <div class="container-fluid">
+            <!-- شعار التطبيق -->
+            <a class="navbar-brand" href="{{ url_for('dashboard') }}">
+                <i class="fas fa-stethoscope me-2"></i>
+                DermaScan
+            </a>
+            
+            <!-- زر القائمة للموبايل -->
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            
+            <!-- قائمة التنقل -->
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('dashboard') }}">
+                            <i class="fas fa-home me-1"></i>
+                            الرئيسية
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="{{ url_for('diagnose') }}">
+                            <i class="fas fa-microscope me-1"></i>
+                            تشخيص جديد
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('cases') }}">
+                            <i class="fas fa-folder me-1"></i>
+                            سجل الحالات
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('statistics') }}">
+                            <i class="fas fa-chart-bar me-1"></i>
+                            الإحصائيات
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('settings') }}">
+                            <i class="fas fa-cog me-1"></i>
+                            الإعدادات
+                        </a>
+                    </li>
+                </ul>
+                
+                <!-- قائمة المستخدم -->
+                <ul class="navbar-nav">
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown">
+                            <i class="fas fa-user-circle me-1"></i>
+                            {{ session.get('user_name', 'المستخدم') }}
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="{{ url_for('settings') }}">
+                                <i class="fas fa-cog me-2"></i>
+                                الإعدادات
+                            </a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="{{ url_for('logout') }}">
+                                <i class="fas fa-sign-out-alt me-2"></i>
+                                تسجيل الخروج
+                            </a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    
+    <!-- المحتوى الرئيسي -->
+    <div class="container-fluid p-4">
+        <div class="row justify-content-center">
+            <div class="col-lg-10">
+                
+                <!-- قسم رفع الصورة -->
+                <div class="card mb-4">
+                    <div class="card-header text-center bg-primary text-white">
+                        <h3 class="mb-0">
+                            <i class="fas fa-microscope me-2"></i>
+                            تشخيص مرض جلدي جديد
+                        </h3>
+                    </div>
+                    <div class="card-body p-4">
+                        <!-- رسائل الخطأ أو النجاح -->
+                        {% if error %}
+                            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                <i class="fas fa-exclamation-triangle me-2"></i>
+                                {{ error }}
+                                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                            </div>
+                        {% endif %}
+                        
+                        <!-- نموذج رفع الصورة -->
+                        <form method="POST" enctype="multipart/form-data" id="diagnosis-form">
+                            <div class="row">
+                                <!-- قسم رفع الصورة -->
+                                <div class="col-md-6">
+                                    <div class="card">
+                                        <div class="card-header">
+                                            <h6 class="mb-0">
+                                                <i class="fas fa-image me-2"></i>
+                                                رفع صورة للجلد
+                                            </h6>
+                                        </div>
+                                        <div class="card-body">
+                                            <!-- منطقة رفع الملف -->
+                                            <div class="mb-3">
+                                                <label for="image-input" class="form-label">اختر صورة:</label>
+                                                <input type="file" name="image" id="image-input" accept="image/*" class="form-control" required>
+                                                <div class="form-text">
+                                                    الأنواع المدعومة: JPG, PNG, GIF, BMP (الحد الأقصى: 10MB)
+                                                </div>
+                                            </div>
+                                            
+                                            <!-- معاينة الصورة -->
+                                            <div id="image-preview-section" style="display: none;">
+                                                <div class="text-center">
+                                                    <div id="image-preview" class="mb-3"></div>
+                                                    <button type="button" class="btn btn-outline-danger" id="remove-image">
+                                                        <i class="fas fa-trash me-2"></i>
+                                                        إزالة الصورة
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- نصائح للحصول على تشخيص دقيق -->
+                                <div class="col-md-6">
+                                    <div class="card">
+                                        <div class="card-header">
+                                            <h6 class="mb-0">
+                                                <i class="fas fa-lightbulb me-2"></i>
+                                                نصائح للحصول على تشخيص دقيق
+                                            </h6>
+                                        </div>
+                                        <div class="card-body">
+                                            <ul class="mb-0">
+                                                <li>تأكد من أن الصورة واضحة وذات جودة عالية</li>
+                                                <li>التقط الصورة في إضاءة جيدة</li>
+                                                <li>ركز على المنطقة المصابة بالجلد</li>
+                                                <li>تجنب الصور المظلمة أو المشوشة</li>
+                                                <li>تأكد من أن الصورة تحتوي على جلد واضح</li>
+                                                <li>استخدم خلفية بسيطة وواضحة</li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- زر التشخيص -->
+                                <div class="col-12 mt-3">
+                                    <div class="d-grid">
+                                        <button type="submit" class="btn btn-primary btn-lg" id="diagnose-btn">
+                                            <i class="fas fa-stethoscope me-2"></i>
+                                            <span id="btn-text">بدء التشخيص</span>
+                                            <span id="loading-spinner" style="display: none;">
+                                                <i class="fas fa-spinner fa-spin me-2"></i>
+                                                جاري التشخيص...
+                                            </span>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                
+                <!-- نتائج التشخيص -->
+                {% if result %}
+                <div class="row mt-4">
+                    <div class="col-12">
+                        <div class="card">
+                            <div class="card-header bg-success text-white">
+                                <h4 class="mb-0">
+                                    <i class="fas fa-check-circle me-2"></i>
+                                    نتائج التشخيص
+                                </h4>
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <!-- الصورة -->
+                                    <div class="col-md-4">
+                                        <div class="text-center">
+                                            <img src="{{ url_for('static', filename='uploads/' + image_path) }}" 
+                                                 class="img-fluid rounded" style="max-height: 300px;">
+                                            <p class="text-muted mt-2">الصورة المرفوعة</p>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- النتيجة الرئيسية -->
+                                    <div class="col-md-8">
+                                        <div class="alert alert-success">
+                                            <h5>
+                                                <i class="fas fa-stethoscope me-2"></i>
+                                                النتيجة: {{ result.arabic_name }}
+                                            </h5>
+                                            <p class="mb-2">
+                                                <strong>الاسم الإنجليزي:</strong> {{ result.name }}
+                                            </p>
+                                            <p class="mb-2">
+                                                <strong>نسبة الثقة:</strong> 
+                                                <span class="badge bg-primary">{{ "%.2f"|format(result.percentage) }}%</span>
+                                            </p>
+                                            <p class="mb-0">
+                                                <strong>رمز المرض:</strong> 
+                                                <code>{{ result.code }}</code>
+                                            </p>
+                                        </div>
+                                        
+                                        <!-- جميع النتائج -->
+                                        <h6 class="mt-4 mb-3">
+                                            <i class="fas fa-list me-2"></i>
+                                            جميع النتائج المحتملة:
+                                        </h6>
+                                        <div class="table-responsive">
+                                            <table class="table table-hover">
+                                                <thead>
+                                                    <tr>
+                                                        <th>المرتبة</th>
+                                                        <th>المرض</th>
+                                                        <th>الاسم الإنجليزي</th>
+                                                        <th>نسبة الثقة</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    {% for disease in all_diseases %}
+                                                    <tr class="{% if loop.first %}table-success{% endif %}">
+                                                        <td>{{ loop.index }}</td>
+                                                        <td>{{ disease.arabic_name }}</td>
+                                                        <td>{{ disease.name }}</td>
+                                                        <td>
+                                                            <div class="progress" style="height: 20px;">
+                                                                <div class="progress-bar" role="progressbar" 
+                                                                     style="width: {{ disease.percentage }}%">
+                                                                    {{ "%.1f"|format(disease.percentage) }}%
+                                                                </div>
+                                                            </div>
+                                                        </td>
+                                                    </tr>
+                                                    {% endfor %}
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                        
+                                        <!-- أزرار إضافية -->
+                                        <div class="mt-4">
+                                            <a href="{{ url_for('case_details', case_id=case_id) }}" class="btn btn-info">
+                                                <i class="fas fa-eye me-2"></i>
+                                                عرض تفاصيل الحالة
+                                            </a>
+                                            <a href="{{ url_for('diagnose') }}" class="btn btn-primary">
+                                                <i class="fas fa-plus me-2"></i>
+                                                تشخيص جديد
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+                
+                <!-- معلومات إضافية -->
+                <div class="row mt-4">
+                    <div class="col-12">
+                        <div class="alert alert-info">
+                            <i class="fas fa-info-circle me-2"></i>
+                            <strong>تنبيه مهم:</strong> هذا التشخيص هو نتيجة تحليل آلي ولا يغني عن استشارة الطبيب المختص. 
+                            يرجى مراجعة الطبيب للحصول على تشخيص دقيق وخطة علاج مناسبة.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- JavaScript للتفاعل مع الصفحة -->
+<script>
+// معاينة الصورة عند اختيارها
+document.getElementById('image-input').addEventListener('change', function(e) {
+    const file = e.target.files[0];
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            document.getElementById('image-preview').innerHTML = 
+                `<img src="${e.target.result}" class="img-fluid rounded" style="max-height: 300px;">`;
+            document.getElementById('image-preview-section').style.display = 'block';
+        };
+        reader.readAsDataURL(file);
+    }
+});
+
+// إزالة الصورة
+document.getElementById('remove-image').addEventListener('click', function() {
+    document.getElementById('image-input').value = '';
+    document.getElementById('image-preview-section').style.display = 'none';
+});
+
+// إظهار مؤشر التحميل عند إرسال النموذج
+document.getElementById('diagnosis-form').addEventListener('submit', function() {
+    document.getElementById('btn-text').style.display = 'none';
+    document.getElementById('loading-spinner').style.display = 'inline';
+    document.getElementById('diagnose-btn').disabled = true;
+});
+</script>
+{% endblock %} 

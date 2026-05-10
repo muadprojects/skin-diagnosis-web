@@ -1,0 +1,23 @@
+[
+  {
+    "name": "الإدارة - رئيسي",
+    "email": "admin@admin.com",
+    "type": "admin",
+    "password": "admin123",
+    "original_name": "رئيسي"
+  },
+  {
+    "name": "د. أحمد",
+    "email": "doctor@dermascan.com",
+    "type": "doctor",
+    "password": "doctor123",
+    "original_name": "أحمد"
+  },
+  {
+    "name": "محمد",
+    "email": "patient@dermascan.com",
+    "type": "patient",
+    "password": "patient123",
+    "original_name": "محمد"
+  }
+] 

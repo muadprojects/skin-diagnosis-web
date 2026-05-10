@@ -1,0 +1,562 @@
+/* الوضع المظلم للتطبيق */
+.dark-theme {
+    background-color: #1a1a1a !important;
+    color: #ffffff !important;
+}
+
+.dark-theme .card {
+    background-color: #2d2d2d !important;
+    color: #ffffff !important;
+    border-color: #555555 !important;
+}
+
+.dark-theme .card-header {
+    background-color: #3d3d3d !important;
+    color: #ffffff !important;
+    border-color: #555555 !important;
+}
+
+.dark-theme .form-control {
+    background-color: #3d3d3d !important;
+    color: #ffffff !important;
+    border-color: #555555 !important;
+}
+
+.dark-theme .form-control:focus {
+    background-color: #4d4d4d !important;
+    border-color: #667eea !important;
+    box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25) !important;
+}
+
+.dark-theme .form-select {
+    background-color: #3d3d3d !important;
+    color: #ffffff !important;
+    border-color: #555555 !important;
+}
+
+.dark-theme .form-select:focus {
+    background-color: #4d4d4d !important;
+    border-color: #667eea !important;
+    box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25) !important;
+}
+
+.dark-theme .nav-tabs .nav-link {
+    color: #ffffff !important;
+}
+
+.dark-theme .nav-tabs .nav-link.active {
+    background-color: #3d3d3d !important;
+    color: #ffffff !important;
+    border-color: #555555 !important;
+}
+
+.dark-theme .table {
+    color: #ffffff !important;
+}
+
+.dark-theme .table-bordered {
+    border-color: #555555 !important;
+}
+
+.dark-theme .alert {
+    background-color: #3d3d3d !important;
+    color: #ffffff !important;
+    border-color: #555555 !important;
+}
+
+.dark-theme .navbar {
+    background-color: #2d2d2d !important;
+    border-color: #555555 !important;
+}
+
+.dark-theme .navbar-brand,
+.dark-theme .nav-link {
+    color: #ffffff !important;
+}
+
+.dark-theme .dropdown-menu {
+    background-color: #3d3d3d !important;
+    border-color: #555555 !important;
+}
+
+.dark-theme .dropdown-item {
+    color: #ffffff !important;
+}
+
+.dark-theme .dropdown-item:hover {
+    background-color: #555555 !important;
+}
+
+.dark-theme .btn-outline-primary {
+    color: #ffffff !important;
+    border-color: #667eea !important;
+}
+
+.dark-theme .btn-outline-primary:hover {
+    background-color: #667eea !important;
+    color: #ffffff !important;
+}
+
+.dark-theme .btn-outline-warning {
+    color: #ffffff !important;
+    border-color: #ffc107 !important;
+}
+
+.dark-theme .btn-outline-warning:hover {
+    background-color: #ffc107 !important;
+    color: #000000 !important;
+}
+
+.dark-theme .btn-outline-info {
+    color: #ffffff !important;
+    border-color: #17a2b8 !important;
+}
+
+.dark-theme .btn-outline-info:hover {
+    background-color: #17a2b8 !important;
+    color: #ffffff !important;
+}
+
+.dark-theme .btn-outline-secondary {
+    color: #ffffff !important;
+    border-color: #6c757d !important;
+}
+
+.dark-theme .btn-outline-secondary:hover {
+    background-color: #6c757d !important;
+    color: #ffffff !important;
+}
+
+.dark-theme .btn-outline-success {
+    color: #ffffff !important;
+    border-color: #28a745 !important;
+}
+
+.dark-theme .btn-outline-success:hover {
+    background-color: #28a745 !important;
+    color: #ffffff !important;
+}
+
+.dark-theme .btn-danger {
+    background-color: #dc3545 !important;
+    border-color: #dc3545 !important;
+    color: #ffffff !important;
+}
+
+.dark-theme .btn-danger:hover {
+    background-color: #c82333 !important;
+    border-color: #bd2130 !important;
+}
+
+.dark-theme .text-muted {
+    color: #adb5bd !important;
+}
+
+.dark-theme .form-text {
+    color: #adb5bd !important;
+}
+
+.dark-theme .text-primary {
+    color: #667eea !important;
+}
+
+.dark-theme .text-success {
+    color: #28a745 !important;
+}
+
+.dark-theme .text-warning {
+    color: #ffc107 !important;
+}
+
+.dark-theme .text-danger {
+    color: #dc3545 !important;
+}
+
+.dark-theme .text-info {
+    color: #17a2b8 !important;
+}
+
+.dark-theme .bg-primary {
+    background-color: #667eea !important;
+}
+
+.dark-theme .bg-success {
+    background-color: #28a745 !important;
+}
+
+.dark-theme .bg-warning {
+    background-color: #ffc107 !important;
+}
+
+.dark-theme .bg-danger {
+    background-color: #dc3545 !important;
+}
+
+.dark-theme .bg-info {
+    background-color: #17a2b8 !important;
+}
+
+.dark-theme .bg-light {
+    background-color: #3d3d3d !important;
+}
+
+.dark-theme .bg-dark {
+    background-color: #1a1a1a !important;
+}
+
+.dark-theme .border {
+    border-color: #555555 !important;
+}
+
+.dark-theme .border-primary {
+    border-color: #667eea !important;
+}
+
+.dark-theme .border-success {
+    border-color: #28a745 !important;
+}
+
+.dark-theme .border-warning {
+    border-color: #ffc107 !important;
+}
+
+.dark-theme .border-danger {
+    border-color: #dc3545 !important;
+}
+
+.dark-theme .border-info {
+    border-color: #17a2b8 !important;
+}
+
+.dark-theme .border-light {
+    border-color: #555555 !important;
+}
+
+.dark-theme .border-dark {
+    border-color: #1a1a1a !important;
+}
+
+/* تحسينات إضافية للوضع المظلم */
+.dark-theme .main-container {
+    background-color: #1a1a1a !important;
+}
+
+.dark-theme .container-fluid {
+    background-color: #1a1a1a !important;
+}
+
+.dark-theme .row {
+    background-color: transparent !important;
+}
+
+.dark-theme .col-12,
+.dark-theme .col-md-6,
+.dark-theme .col-lg-8 {
+    background-color: transparent !important;
+}
+
+.dark-theme .tab-content {
+    background-color: transparent !important;
+}
+
+.dark-theme .tab-pane {
+    background-color: transparent !important;
+}
+
+.dark-theme .form-label {
+    color: #ffffff !important;
+}
+
+.dark-theme .form-check-label {
+    color: #ffffff !important;
+}
+
+.dark-theme .form-check-input:checked {
+    background-color: #667eea !important;
+    border-color: #667eea !important;
+}
+
+.dark-theme .form-check-input:focus {
+    border-color: #667eea !important;
+    box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25) !important;
+}
+
+.dark-theme .btn-close {
+    filter: invert(1) grayscale(100%) brightness(200%);
+}
+
+.dark-theme .modal-content {
+    background-color: #2d2d2d !important;
+    color: #ffffff !important;
+    border-color: #555555 !important;
+}
+
+.dark-theme .modal-header {
+    background-color: #3d3d3d !important;
+    border-color: #555555 !important;
+}
+
+.dark-theme .modal-footer {
+    background-color: #3d3d3d !important;
+    border-color: #555555 !important;
+}
+
+.dark-theme .modal-title {
+    color: #ffffff !important;
+}
+
+.dark-theme .close {
+    color: #ffffff !important;
+}
+
+.dark-theme .close:hover {
+    color: #adb5bd !important;
+}
+
+/* تحسينات للصور في الوضع المظلم */
+.dark-theme img {
+    filter: brightness(0.9) contrast(1.1);
+}
+
+.dark-theme .card img {
+    filter: brightness(0.9) contrast(1.1);
+}
+
+/* تحسينات للرسوم البيانية في الوضع المظلم */
+.dark-theme canvas {
+    filter: invert(0.9) hue-rotate(180deg);
+}
+
+/* تحسينات للشريط الجانبي */
+.dark-theme .sidebar {
+    background-color: #2d2d2d !important;
+    border-color: #555555 !important;
+}
+
+.dark-theme .sidebar .nav-link {
+    color: #ffffff !important;
+}
+
+.dark-theme .sidebar .nav-link:hover {
+    background-color: #3d3d3d !important;
+}
+
+.dark-theme .sidebar .nav-link.active {
+    background-color: #667eea !important;
+    color: #ffffff !important;
+}
+
+/* تحسينات للجداول */
+.dark-theme .table-striped > tbody > tr:nth-of-type(odd) {
+    background-color: #3d3d3d !important;
+}
+
+.dark-theme .table-hover > tbody > tr:hover {
+    background-color: #4d4d4d !important;
+}
+
+/* تحسينات للقوائم */
+.dark-theme .list-group-item {
+    background-color: #2d2d2d !important;
+    color: #ffffff !important;
+    border-color: #555555 !important;
+}
+
+.dark-theme .list-group-item:hover {
+    background-color: #3d3d3d !important;
+}
+
+.dark-theme .list-group-item.active {
+    background-color: #667eea !important;
+    border-color: #667eea !important;
+}
+
+/* تحسينات للتنبيهات */
+.dark-theme .alert-primary {
+    background-color: rgba(102, 126, 234, 0.2) !important;
+    border-color: #667eea !important;
+    color: #ffffff !important;
+}
+
+.dark-theme .alert-success {
+    background-color: rgba(40, 167, 69, 0.2) !important;
+    border-color: #28a745 !important;
+    color: #ffffff !important;
+}
+
+.dark-theme .alert-warning {
+    background-color: rgba(255, 193, 7, 0.2) !important;
+    border-color: #ffc107 !important;
+    color: #ffffff !important;
+}
+
+.dark-theme .alert-danger {
+    background-color: rgba(220, 53, 69, 0.2) !important;
+    border-color: #dc3545 !important;
+    color: #ffffff !important;
+}
+
+.dark-theme .alert-info {
+    background-color: rgba(23, 162, 184, 0.2) !important;
+    border-color: #17a2b8 !important;
+    color: #ffffff !important;
+}
+
+/* تحسينات للشريط العلوي */
+.dark-theme .navbar-toggler {
+    border-color: #555555 !important;
+}
+
+.dark-theme .navbar-toggler-icon {
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba%28255, 255, 255, 0.75%29' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e") !important;
+}
+
+/* تحسينات للشريط السفلي */
+.dark-theme .footer {
+    background-color: #2d2d2d !important;
+    color: #ffffff !important;
+    border-color: #555555 !important;
+}
+
+/* تحسينات للروابط */
+.dark-theme a {
+    color: #667eea !important;
+}
+
+.dark-theme a:hover {
+    color: #5a6fd8 !important;
+}
+
+.dark-theme a.text-primary {
+    color: #667eea !important;
+}
+
+.dark-theme a.text-primary:hover {
+    color: #5a6fd8 !important;
+}
+
+/* تحسينات للعناوين */
+.dark-theme h1, .dark-theme h2, .dark-theme h3, 
+.dark-theme h4, .dark-theme h5, .dark-theme h6 {
+    color: #ffffff !important;
+}
+
+/* تحسينات للفقرات */
+.dark-theme p {
+    color: #ffffff !important;
+}
+
+/* تحسينات للقوائم */
+.dark-theme ul, .dark-theme ol {
+    color: #ffffff !important;
+}
+
+.dark-theme li {
+    color: #ffffff !important;
+}
+
+/* تحسينات للكود */
+.dark-theme code {
+    background-color: #3d3d3d !important;
+    color: #ffffff !important;
+}
+
+.dark-theme pre {
+    background-color: #3d3d3d !important;
+    color: #ffffff !important;
+    border-color: #555555 !important;
+}
+
+/* تحسينات للاقتباسات */
+.dark-theme blockquote {
+    background-color: #3d3d3d !important;
+    border-color: #555555 !important;
+    color: #ffffff !important;
+}
+
+/* تحسينات للشريط الجانبي */
+.dark-theme .offcanvas {
+    background-color: #2d2d2d !important;
+    color: #ffffff !important;
+}
+
+.dark-theme .offcanvas-header {
+    background-color: #3d3d3d !important;
+    border-color: #555555 !important;
+}
+
+.dark-theme .offcanvas-body {
+    background-color: #2d2d2d !important;
+}
+
+/* تحسينات للشريط العلوي الثابت */
+.dark-theme .fixed-top {
+    background-color: #2d2d2d !important;
+    border-color: #555555 !important;
+}
+
+/* تحسينات للشريط السفلي الثابت */
+.dark-theme .fixed-bottom {
+    background-color: #2d2d2d !important;
+    border-color: #555555 !important;
+}
+
+/* تحسينات للشريط الجانبي الثابت */
+.dark-theme .sticky-top {
+    background-color: #2d2d2d !important;
+    border-color: #555555 !important;
+}
+
+/* تحسينات للشريط الجانبي الثابت */
+.dark-theme .sticky-bottom {
+    background-color: #2d2d2d !important;
+    border-color: #555555 !important;
+}
+
+/* تحسينات للشريط الجانبي الثابت */
+.dark-theme .position-fixed {
+    background-color: #2d2d2d !important;
+    border-color: #555555 !important;
+}
+
+/* تحسينات للشريط الجانبي الثابت */
+.dark-theme .position-sticky {
+    background-color: #2d2d2d !important;
+    border-color: #555555 !important;
+}
+
+/* تحسينات للشريط الجانبي الثابت */
+.dark-theme .position-absolute {
+    background-color: #2d2d2d !important;
+    border-color: #555555 !important;
+}
+
+/* تحسينات للشريط الجانبي الثابت */
+.dark-theme .position-relative {
+    background-color: #2d2d2d !important;
+    border-color: #555555 !important;
+}
+
+/* تحسينات للشريط الجانبي الثابت */
+.dark-theme .position-static {
+    background-color: #2d2d2d !important;
+    border-color: #555555 !important;
+}
+
+/* تحسينات للشريط الجانبي الثابت */
+.dark-theme .position-inherit {
+    background-color: #2d2d2d !important;
+    border-color: #555555 !important;
+}
+
+/* تحسينات للشريط الجانبي الثابت */
+.dark-theme .position-initial {
+    background-color: #2d2d2d !important;
+    border-color: #555555 !important;
+}
+
+/* تحسينات للشريط الجانبي الثابت */
+.dark-theme .position-unset {
+    background-color: #2d2d2d !important;
+    border-color: #555555 !important;
+} 

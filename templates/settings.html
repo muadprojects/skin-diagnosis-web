@@ -1,0 +1,727 @@
+{% extends "base.html" %}
+
+{% block title %}الإعدادات - DermaScan{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* المظهر الداكن */
+    .dark-theme {
+        background-color: #1a1a1a !important;
+        color: #ffffff !important;
+    }
+    
+    .dark-theme .card {
+        background-color: #2d2d2d !important;
+        color: #ffffff !important;
+        border-color: #555555 !important;
+    }
+    
+    .dark-theme .card-header {
+        background-color: #3d3d3d !important;
+        color: #ffffff !important;
+        border-color: #555555 !important;
+    }
+    
+    .dark-theme .form-control {
+        background-color: #3d3d3d !important;
+        color: #ffffff !important;
+        border-color: #555555 !important;
+    }
+    
+    .dark-theme .form-select {
+        background-color: #3d3d3d !important;
+        color: #ffffff !important;
+        border-color: #555555 !important;
+    }
+    
+    .dark-theme .nav-tabs .nav-link {
+        color: #ffffff !important;
+    }
+    
+    .dark-theme .nav-tabs .nav-link.active {
+        background-color: #3d3d3d !important;
+        color: #ffffff !important;
+    }
+    
+    .dark-theme .table {
+        color: #ffffff !important;
+    }
+    
+    .dark-theme .table-bordered {
+        border-color: #555555 !important;
+    }
+    
+    .dark-theme .alert {
+        background-color: #3d3d3d !important;
+        color: #ffffff !important;
+    }
+    
+    .dark-theme .navbar {
+        background-color: #2d2d2d !important;
+        border-color: #555555 !important;
+    }
+    
+    .dark-theme .navbar-brand,
+    .dark-theme .nav-link {
+        color: #ffffff !important;
+    }
+    
+    .dark-theme .dropdown-menu {
+        background-color: #3d3d3d !important;
+        border-color: #555555 !important;
+    }
+    
+    .dark-theme .dropdown-item {
+        color: #ffffff !important;
+    }
+    
+    .dark-theme .dropdown-item:hover {
+        background-color: #555555 !important;
+    }
+    
+    .dark-theme .btn-outline-primary {
+        color: #ffffff !important;
+        border-color: #667eea !important;
+    }
+    
+    .dark-theme .btn-outline-primary:hover {
+        background-color: #667eea !important;
+        color: #ffffff !important;
+    }
+    
+    .dark-theme .btn-outline-warning {
+        color: #ffffff !important;
+        border-color: #ffc107 !important;
+    }
+    
+    .dark-theme .btn-outline-warning:hover {
+        background-color: #ffc107 !important;
+        color: #000000 !important;
+    }
+    
+    .dark-theme .btn-outline-info {
+        color: #ffffff !important;
+        border-color: #17a2b8 !important;
+    }
+    
+    .dark-theme .btn-outline-info:hover {
+        background-color: #17a2b8 !important;
+        color: #ffffff !important;
+    }
+    
+    .dark-theme .btn-outline-secondary {
+        color: #ffffff !important;
+        border-color: #6c757d !important;
+    }
+    
+    .dark-theme .btn-outline-secondary:hover {
+        background-color: #6c757d !important;
+        color: #ffffff !important;
+    }
+    
+    .dark-theme .btn-outline-success {
+        color: #ffffff !important;
+        border-color: #28a745 !important;
+    }
+    
+    .dark-theme .btn-outline-success:hover {
+        background-color: #28a745 !important;
+        color: #ffffff !important;
+    }
+    
+    .dark-theme .btn-danger {
+        background-color: #dc3545 !important;
+        border-color: #dc3545 !important;
+        color: #ffffff !important;
+    }
+    
+    .dark-theme .btn-danger:hover {
+        background-color: #c82333 !important;
+        border-color: #bd2130 !important;
+    }
+    
+    .dark-theme .text-muted {
+        color: #adb5bd !important;
+    }
+    
+    .dark-theme .form-text {
+        color: #adb5bd !important;
+    }
+    
+    /* تحسينات إضافية */
+    .settings-card {
+        border-radius: 15px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        transition: all 0.3s ease;
+    }
+    
+    .settings-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 15px rgba(0, 0, 0, 0.15);
+    }
+    
+    .form-control, .form-select {
+        border-radius: 10px;
+        transition: all 0.3s ease;
+    }
+    
+    .form-control:focus, .form-select:focus {
+        box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+        border-color: #667eea;
+    }
+    
+    .btn {
+        border-radius: 10px;
+        transition: all 0.3s ease;
+    }
+    
+    .alert {
+        border-radius: 10px;
+        border: none;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="main-container">
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="{{ url_for('dashboard') }}">
+                <i class="fas fa-stethoscope me-2"></i>
+                DermaScan
+            </a>
+            
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('dashboard') }}">
+                            <i class="fas fa-home me-1"></i>
+                            الرئيسية
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('diagnosis') }}">
+                            <i class="fas fa-microscope me-1"></i>
+                            تشخيص جديد
+                        </a>
+                    </li>
+                    {% if session.get('user_type') == 'doctor' %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('cases') }}">
+                            <i class="fas fa-folder me-1"></i>
+                            سجل الحالات
+                        </a>
+                    </li>
+                    {% endif %}
+                    {% if session.get('user_type') == 'doctor' %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('statistics') }}">
+                            <i class="fas fa-chart-bar me-1"></i>
+                            الإحصائيات
+                        </a>
+                    </li>
+                    {% endif %}
+                    <li class="nav-item">
+                        <a class="nav-link active" href="{{ url_for('settings') }}">
+                            <i class="fas fa-cog me-1"></i>
+                            الإعدادات
+                        </a>
+                    </li>
+                </ul>
+                
+                <ul class="navbar-nav">
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown">
+                            <i class="fas fa-user-circle me-1"></i>
+                            {{ session.get('user_name', 'المستخدم') }}
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="{{ url_for('logout') }}">
+                                <i class="fas fa-sign-out-alt me-2"></i>
+                                تسجيل الخروج
+                            </a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    
+    <!-- Main Content -->
+    <div class="container-fluid p-4">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <!-- Header -->
+                <div class="row mb-4">
+                    <div class="col-12">
+                        <h2>
+                            <i class="fas fa-cog me-2"></i>
+                            الإعدادات
+                        </h2>
+                        <p class="text-muted">تخصيص إعدادات التطبيق والحساب</p>
+                    </div>
+                </div>
+                
+                <!-- Settings Tabs -->
+                <div class="row">
+                    <div class="col-12">
+                        <div class="card settings-card">
+                            <div class="card-header">
+                                <ul class="nav nav-tabs card-header-tabs" id="settingsTabs" role="tablist">
+                                    <li class="nav-item" role="presentation">
+                                        <button class="nav-link active" id="general-tab" data-bs-toggle="tab" data-bs-target="#general" type="button" role="tab">
+                                            <i class="fas fa-cog me-2"></i>
+                                            عام
+                                        </button>
+                                    </li>
+                                    <li class="nav-item" role="presentation">
+                                        <button class="nav-link" id="security-tab" data-bs-toggle="tab" data-bs-target="#security" type="button" role="tab">
+                                            <i class="fas fa-shield-alt me-2"></i>
+                                            الأمان
+                                        </button>
+                                    </li>
+                                    <li class="nav-item" role="presentation">
+                                        <button class="nav-link" id="account-tab" data-bs-toggle="tab" data-bs-target="#account" type="button" role="tab">
+                                            <i class="fas fa-user me-2"></i>
+                                            الحساب
+                                        </button>
+                                    </li>
+                                    {% if session.get('user_type') == 'doctor' %}
+                                    <li class="nav-item" role="presentation">
+                                        <button class="nav-link" id="advanced-tab" data-bs-toggle="tab" data-bs-target="#advanced" type="button" role="tab">
+                                            <i class="fas fa-tools me-2"></i>
+                                            متقدم
+                                        </button>
+                                    </li>
+                                    {% endif %}
+                                </ul>
+                            </div>
+                            <div class="card-body">
+                                <div class="tab-content" id="settingsTabContent">
+                                    <!-- General Settings -->
+                                    <div class="tab-pane fade show active" id="general" role="tabpanel">
+                                        <h5 class="mb-4">
+                                            <i class="fas fa-cog me-2"></i>
+                                            الإعدادات العامة
+                                        </h5>
+                                        
+                                        <div class="mb-4">
+                                            <label for="language-select" class="form-label">
+                                                <i class="fas fa-language me-2"></i>
+                                                اللغة
+                                            </label>
+                                            <select class="form-select" id="language-select">
+                                                <option value="ar" selected>العربية</option>
+                                                <option value="en">English</option>
+                                            </select>
+                                            <div class="form-text">اختر لغة التطبيق المفضلة</div>
+                                        </div>
+                                        
+                                        <div class="mb-4">
+                                            <label for="theme-select" class="form-label">
+                                                <i class="fas fa-palette me-2"></i>
+                                                المظهر
+                                            </label>
+                                            <select class="form-select" id="theme-select">
+                                                <option value="light" selected>فاتح</option>
+                                                <option value="dark">داكن</option>
+                                                <option value="auto">تلقائي</option>
+                                            </select>
+                                            <div class="form-text">اختر مظهر التطبيق</div>
+                                        </div>
+                                        
+                                        <div class="mb-4">
+                                            <div class="form-check form-switch">
+                                                <input class="form-check-input" type="checkbox" id="notifications" checked>
+                                                <label class="form-check-label" for="notifications">
+                                                    <i class="fas fa-bell me-2"></i>
+                                                    إشعارات التطبيق
+                                                </label>
+                                            </div>
+                                            <div class="form-text">استلام إشعارات عند اكتمال التشخيص</div>
+                                        </div>
+                                        
+                                        <div class="mb-4">
+                                            <div class="form-check form-switch">
+                                                <input class="form-check-input" type="checkbox" id="auto-save" checked>
+                                                <label class="form-check-label" for="auto-save">
+                                                    <i class="fas fa-save me-2"></i>
+                                                    الحفظ التلقائي
+                                                </label>
+                                            </div>
+                                            <div class="form-text">حفظ الحالات تلقائياً بعد التشخيص</div>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Security Settings -->
+                                    <div class="tab-pane fade" id="security" role="tabpanel">
+                                        <h5 class="mb-4">
+                                            <i class="fas fa-shield-alt me-2"></i>
+                                            إعدادات الأمان
+                                        </h5>
+                                        
+                                        <div class="mb-4">
+                                            <h6>تغيير كلمة المرور</h6>
+                                            <form id="password-form">
+                                                <div class="mb-3">
+                                                    <label for="current-password" class="form-label">كلمة المرور الحالية</label>
+                                                    <input type="password" class="form-control" id="current-password" required>
+                                                </div>
+                                                <div class="mb-3">
+                                                    <label for="new-password" class="form-label">كلمة المرور الجديدة</label>
+                                                    <input type="password" class="form-control" id="new-password" required>
+                                                </div>
+                                                <div class="mb-3">
+                                                    <label for="confirm-new-password" class="form-label">تأكيد كلمة المرور الجديدة</label>
+                                                    <input type="password" class="form-control" id="confirm-new-password" required>
+                                                </div>
+                                                <button type="submit" class="btn btn-primary">
+                                                    <i class="fas fa-key me-2"></i>
+                                                    تغيير كلمة المرور
+                                                </button>
+                                            </form>
+                                        </div>
+                                        
+                                        <div class="mb-4">
+                                            <h6>إعدادات الأمان الإضافية</h6>
+                                            <div class="form-check form-switch mb-2">
+                                                <input class="form-check-input" type="checkbox" id="two-factor">
+                                                <label class="form-check-label" for="two-factor">
+                                                    <i class="fas fa-mobile-alt me-2"></i>
+                                                    المصادقة الثنائية
+                                                </label>
+                                            </div>
+                                            <div class="form-check form-switch mb-2">
+                                                <input class="form-check-input" type="checkbox" id="session-timeout">
+                                                <label class="form-check-label" for="session-timeout">
+                                                    <i class="fas fa-clock me-2"></i>
+                                                    انتهاء الجلسة تلقائياً
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Account Settings -->
+                                    <div class="tab-pane fade" id="account" role="tabpanel">
+                                        <h5 class="mb-4">
+                                            <i class="fas fa-user me-2"></i>
+                                            إعدادات الحساب
+                                        </h5>
+                                        
+                                        <div class="mb-4">
+                                            <h6>معلومات الحساب</h6>
+                                            <div class="row">
+                                                <div class="col-md-6 mb-3">
+                                                    <label class="form-label">الاسم</label>
+                                                    <input type="text" class="form-control" value="{{ session.get('user_name', '') }}" readonly>
+                                                </div>
+                                                <div class="col-md-6 mb-3">
+                                                    <label class="form-label">البريد الإلكتروني</label>
+                                                    <input type="email" class="form-control" value="{{ session.get('user_id', '') }}" readonly>
+                                                </div>
+                                                <div class="col-md-6 mb-3">
+                                                    <label class="form-label">نوع الحساب</label>
+                                                    <input type="text" class="form-control" value="{% if session.get('user_type') == 'doctor' %}طبيب{% else %}مستخدم عادي{% endif %}" readonly>
+                                                </div>
+                                                <div class="col-md-6 mb-3">
+                                                    <label class="form-label">تاريخ التسجيل</label>
+                                                    <input type="text" class="form-control" value="2024" readonly>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="mb-4">
+                                            <h6>إدارة البيانات</h6>
+                                            <div class="d-grid gap-2">
+                                                <button type="button" class="btn btn-outline-primary" id="export-data">
+                                                    <i class="fas fa-download me-2"></i>
+                                                    تصدير البيانات
+                                                </button>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="mb-4">
+                                            <h6>حذف الحساب</h6>
+                                            <div class="alert alert-danger">
+                                                <h6 class="alert-heading">
+                                                    <i class="fas fa-exclamation-triangle me-2"></i>
+                                                    تحذير
+                                                </h6>
+                                                <p class="mb-0">حذف الحساب سيؤدي إلى فقدان جميع البيانات نهائياً</p>
+                                            </div>
+                                            <button type="button" class="btn btn-danger" id="delete-account">
+                                                <i class="fas fa-trash me-2"></i>
+                                                حذف الحساب
+                                            </button>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Advanced Settings (Doctors Only) -->
+                                    {% if session.get('user_type') == 'doctor' %}
+                                    <div class="tab-pane fade" id="advanced" role="tabpanel">
+                                        <h5 class="mb-4">
+                                            <i class="fas fa-tools me-2"></i>
+                                            الإعدادات المتقدمة
+                                        </h5>
+                                        
+                                        <div class="mb-4">
+                                            <h6>إدارة النماذج</h6>
+                                            <div class="d-grid gap-2">
+                                                <button type="button" class="btn btn-outline-primary">
+                                                    <i class="fas fa-download me-2"></i>
+                                                    تحميل نموذج جديد
+                                                </button>
+                                                <button type="button" class="btn btn-outline-success">
+                                                    <i class="fas fa-sync me-2"></i>
+                                                    تحديث النماذج
+                                                </button>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="mb-4">
+                                            <h6>النسخ الاحتياطي</h6>
+                                            <div class="d-grid gap-2">
+                                                <button type="button" class="btn btn-outline-info">
+                                                    <i class="fas fa-cloud-upload-alt me-2"></i>
+                                                    رفع نسخة احتياطية
+                                                </button>
+                                                <button type="button" class="btn btn-outline-secondary">
+                                                    <i class="fas fa-cloud-download-alt me-2"></i>
+                                                    تحميل نسخة احتياطية
+                                                </button>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="mb-4">
+                                            <h6>إعدادات التشخيص</h6>
+                                            <div class="form-check form-switch mb-2">
+                                                <input class="form-check-input" type="checkbox" id="auto-diagnosis" checked>
+                                                <label class="form-check-label" for="auto-diagnosis">
+                                                    التشخيص التلقائي
+                                                </label>
+                                            </div>
+                                            <div class="form-check form-switch mb-2">
+                                                <input class="form-check-input" type="checkbox" id="detailed-reports">
+                                                <label class="form-check-label" for="detailed-reports">
+                                                    التقارير التفصيلية
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // تغيير كلمة المرور
+    document.getElementById('password-form').addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        const currentPassword = document.getElementById('current-password').value;
+        const newPassword = document.getElementById('new-password').value;
+        const confirmPassword = document.getElementById('confirm-new-password').value;
+        
+        if (newPassword !== confirmPassword) {
+            showAlert('كلمات المرور غير متطابقة', 'danger');
+            return;
+        }
+        
+        if (newPassword.length < 6) {
+            showAlert('كلمة المرور يجب أن تكون 6 أحرف على الأقل', 'danger');
+            return;
+        }
+        
+        // محاكاة تغيير كلمة المرور
+        showAlert('تم تغيير كلمة المرور بنجاح', 'success');
+        this.reset();
+    });
+    
+    // حذف الحساب
+    document.getElementById('delete-account').addEventListener('click', function() {
+        if (confirm('هل أنت متأكد من حذف الحساب؟ هذا الإجراء لا يمكن التراجع عنه.')) {
+            if (confirm('هل أنت متأكد تماماً؟ سيتم حذف جميع البيانات نهائياً.')) {
+                showAlert('تم حذف الحساب بنجاح', 'success');
+                setTimeout(() => {
+                    window.location.href = '/logout';
+                }, 2000);
+            }
+        }
+    });
+    
+    // حفظ الإعدادات
+    function saveSettings() {
+        const settings = {
+            language: document.getElementById('language-select').value,
+            theme: document.getElementById('theme-select').value,
+            notifications: document.getElementById('notifications').checked,
+            autoSave: document.getElementById('auto-save').checked,
+            twoFactor: document.getElementById('two-factor')?.checked || false,
+            sessionTimeout: document.getElementById('session-timeout')?.checked || false
+        };
+        
+        localStorage.setItem('dermascan-settings', JSON.stringify(settings));
+        showAlert('تم حفظ الإعدادات بنجاح', 'success');
+        
+        // تطبيق الإعدادات فوراً
+        applySettings(settings);
+    }
+    
+    // تطبيق الإعدادات
+    function applySettings(settings) {
+        // تطبيق اللغة
+        if (settings.language === 'en') {
+            document.documentElement.lang = 'en';
+            document.documentElement.dir = 'ltr';
+            // استخدام ملف settings.js للترجمة
+            if (window.appSettings) {
+                window.appSettings.changeLanguageToEnglish();
+            }
+        } else {
+            document.documentElement.lang = 'ar';
+            document.documentElement.dir = 'rtl';
+            // استخدام ملف settings.js للترجمة
+            if (window.appSettings) {
+                window.appSettings.changeLanguageToArabic();
+            }
+        }
+        
+        // تطبيق المظهر
+        if (settings.theme === 'dark') {
+            document.body.classList.add('dark-theme');
+            document.documentElement.setAttribute('data-theme', 'dark');
+        } else if (settings.theme === 'auto') {
+            // تطبيق الوضع التلقائي
+            if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+                document.body.classList.add('dark-theme');
+                document.documentElement.setAttribute('data-theme', 'dark');
+            } else {
+                document.body.classList.remove('dark-theme');
+                document.documentElement.setAttribute('data-theme', 'light');
+            }
+        } else {
+            document.body.classList.remove('dark-theme');
+            document.documentElement.setAttribute('data-theme', 'light');
+        }
+        
+        // تطبيق الإشعارات
+        if (settings.notifications) {
+            if ('Notification' in window && Notification.permission === 'default') {
+                Notification.requestPermission();
+            }
+        }
+        
+        // حفظ الإعدادات في الجلسة
+        sessionStorage.setItem('current-language', settings.language);
+        sessionStorage.setItem('current-theme', settings.theme);
+    }
+    
+    // تحميل الإعدادات
+    function loadSettings() {
+        const settings = JSON.parse(localStorage.getItem('dermascan-settings') || '{}');
+        
+        if (settings.language) document.getElementById('language-select').value = settings.language;
+        if (settings.theme) document.getElementById('theme-select').value = settings.theme;
+        if (settings.notifications !== undefined) document.getElementById('notifications').checked = settings.notifications;
+        if (settings.autoSave !== undefined) document.getElementById('auto-save').checked = settings.autoSave;
+        if (settings.twoFactor !== undefined && document.getElementById('two-factor')) {
+            document.getElementById('two-factor').checked = settings.twoFactor;
+        }
+        if (settings.sessionTimeout !== undefined && document.getElementById('session-timeout')) {
+            document.getElementById('session-timeout').checked = settings.sessionTimeout;
+        }
+        
+        // تطبيق الإعدادات المحفوظة
+        applySettings(settings);
+    }
+    
+    // عرض رسائل التنبيه
+    function showAlert(message, type) {
+        const alertDiv = document.createElement('div');
+        alertDiv.className = `alert alert-${type} alert-dismissible fade show`;
+        alertDiv.innerHTML = `
+            <i class="fas fa-${type === 'success' ? 'check-circle' : 'exclamation-triangle'} me-2"></i>
+            ${message}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        `;
+        
+        const container = document.querySelector('.container-fluid');
+        container.insertBefore(alertDiv, container.firstChild);
+        
+        // إخفاء الرسالة بعد 5 ثوانٍ
+        setTimeout(() => {
+            alertDiv.remove();
+        }, 5000);
+    }
+    
+    // تحميل الإعدادات عند فتح الصفحة
+    document.addEventListener('DOMContentLoaded', function() {
+        loadSettings();
+        
+        // حفظ الإعدادات عند التغيير
+        document.querySelectorAll('#general input, #general select').forEach(element => {
+            element.addEventListener('change', saveSettings);
+        });
+        
+        // حفظ إعدادات الأمان عند التغيير
+        document.querySelectorAll('#security input').forEach(element => {
+            element.addEventListener('change', saveSettings);
+        });
+        
+        // حفظ إعدادات الأطباء المتقدمة عند التغيير
+        document.querySelectorAll('#advanced input').forEach(element => {
+            element.addEventListener('change', saveSettings);
+        });
+        
+        // مراقبة تغيير الوضع المظلم في النظام
+        if (window.matchMedia) {
+            const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+            mediaQuery.addListener(function(e) {
+                const settings = JSON.parse(localStorage.getItem('dermascan-settings') || '{}');
+                if (settings.theme === 'auto') {
+                    applySettings(settings);
+                }
+            });
+        }
+    });
+    
+    // إرسال إشعار عند اكتمال التشخيص (إذا كانت الإشعارات مفعلة)
+    function sendNotification(title, body) {
+        if ('Notification' in window && Notification.permission === 'granted') {
+            new Notification(title, { body: body });
+        }
+    }
+    
+    // تصدير البيانات
+    document.getElementById('export-data')?.addEventListener('click', function() {
+        const userData = {
+            name: '{{ session.get("user_name", "") }}',
+            email: '{{ session.get("user_id", "") }}',
+            type: '{{ session.get("user_type", "") }}',
+            exportDate: new Date().toISOString()
+        };
+        
+        const dataStr = JSON.stringify(userData, null, 2);
+        const dataBlob = new Blob([dataStr], {type: 'application/json'});
+        const url = URL.createObjectURL(dataBlob);
+        
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = 'dermascan-data.json';
+        link.click();
+        
+        showAlert('تم تصدير البيانات بنجاح', 'success');
+    });
+</script>
+{% endblock %} 

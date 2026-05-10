@@ -1,0 +1,318 @@
+{% extends "base.html" %}
+
+{% block title %}سجل الحالات - DermaScan{% endblock %}
+
+{% block content %}
+<div class="main-container">
+    <div class="container-fluid p-4">
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h4 class="mb-0">
+                            <i class="fas fa-folder-open me-2"></i>
+                        سجل الحالات
+                        </h4>
+                        <div>
+                            {% if session.user_type in ['admin', 'doctor'] %}
+                            <a href="{{ url_for('add_case') }}" class="btn btn-primary">
+                                <i class="fas fa-plus me-1"></i>
+                                إدراج حالة جديدة
+                            </a>
+                            {% else %}
+                            <a href="{{ url_for('diagnose') }}" class="btn btn-primary">
+                                <i class="fas fa-plus me-1"></i>
+                        تشخيص جديد
+                    </a>
+                            {% endif %}
+            </div>
+        </div>
+                    <div class="card-body">
+                        {% if cases %}
+                        <div class="mb-3 d-flex flex-wrap gap-2 align-items-center justify-content-start">
+                            <input type="text" id="searchInput" class="form-control" style="max-width: 220px;" placeholder="ابحث باسم المريض...">
+                            <select id="diseaseFilter" class="form-select" style="max-width: 220px;">
+                                <option value="">كل الأمراض</option>
+                                <option value="akiec">التقرن الشعاعي (Actinic keratoses)</option>
+                                <option value="bcc">سرطان الخلايا القاعدية (Basal cell carcinoma)</option>
+                                <option value="bkl">آفات شبيهة بالتقرن الحميد (Benign keratosis-like lesions)</option>
+                                <option value="df">الورم الليفي الجلدي (Dermatofibroma)</option>
+                                <option value="mel">سرطان الجلد الميلانيني (Melanoma)</option>
+                                <option value="nv">الشامات الميلانينية (Melanocytic nevi)</option>
+                                <option value="vasc">آفات الأوعية الدموية (Vascular lesions)</option>
+                                </select>
+                            <input type="date" id="dateFilter" class="form-control" style="max-width: 180px;" placeholder="تصفية بالتاريخ">
+                            <button type="button" id="searchBtn" class="btn btn-primary" onclick="searchFunction()">
+                                <i class="fas fa-search me-1"></i>
+                                بحث
+                            </button>
+                            <button type="button" id="clearBtn" class="btn btn-secondary" onclick="clearFunction()">
+                                <i class="fas fa-times me-1"></i>
+                                مسح
+                                </button>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="table table-hover" id="casesTable">
+                                <thead class="table-dark">
+                                    <tr>
+                                        <th>الصورة</th>
+                                        <th>الاسم</th>
+                                        <th>التشخيص</th>
+                                        <th>نسبة الثقة</th>
+                                        <th>التاريخ</th>
+                                        <th>الإجراءات</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for case in cases %}
+                                    <tr>
+                                        <td>
+                                            {% if case.image_path %}
+                                                <img src="{{ url_for('static', filename='uploads/' + case.image_path) }}" 
+                                                     alt="صورة الحالة" 
+                                                     class="img-thumbnail" 
+                                                     style="width: 80px; height: 80px; object-fit: cover;">
+                                            {% elif case.diagnoses and case.diagnoses|length > 0 %}
+                                                <img src="{{ url_for('static', filename='uploads/' + case.diagnoses[-1].image_path) }}" 
+                                                 alt="صورة الحالة" 
+                                                 class="img-thumbnail" 
+                                                     style="width: 80px; height: 80px; object-fit: cover;">
+                                            {% else %}
+                                                <div class="bg-light d-flex align-items-center justify-content-center" 
+                                                     style="width: 80px; height: 80px;">
+                                                    <i class="fas fa-image text-muted"></i>
+                    </div>
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            <strong>{{ case.patient_name if case.patient_name else 'غير محدد' }}</strong>
+                                            {% if case.patient_age %}
+                                                <br><small class="text-muted">العمر: {{ case.patient_age }}</small>
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            {% if case.diagnoses and case.diagnoses|length > 0 %}
+                                                {% set latest_diagnosis = case.diagnoses[-1] %}
+                                                <span class="badge bg-success" data-disease-code="{{ latest_diagnosis.disease }}">
+                                                    {{ latest_diagnosis.disease_english if latest_diagnosis.disease_english else latest_diagnosis.disease }}
+                                                </span>
+                                            {% elif case.disease_english %}
+                                                <span class="badge bg-success">
+                                                    {{ case.disease_english }}
+                                                </span>
+                                            {% elif case.disease %}
+                                            <span class="badge bg-success">
+                                                    {{ case.disease }}
+                                                </span>
+                                            {% else %}
+                                                <span class="badge bg-secondary">
+                                                    لا يوجد تشخيص
+                                            </span>
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            {% if case.diagnoses and case.diagnoses|length > 0 %}
+                                                {% set latest_diagnosis = case.diagnoses[-1] %}
+                                                <div class="progress" style="height: 20px;">
+                                                <div class="progress-bar bg-success" 
+                                                     role="progressbar" 
+                                                         style="width: {{ (latest_diagnosis.confidence * 100)|round(1) }}%"
+                                                         aria-valuenow="{{ (latest_diagnosis.confidence * 100)|round(1) }}" 
+                                                     aria-valuemin="0" 
+                                                     aria-valuemax="100">
+                                                        {{ "%.1f"|format(latest_diagnosis.confidence * 100) }}%
+                </div>
+            </div>
+                                            {% elif case.confidence %}
+                                                <div class="progress" style="height: 20px;">
+                                                    <div class="progress-bar bg-success" 
+                                                         role="progressbar" 
+                                                         style="width: {{ (case.confidence * 100)|round(1) }}%"
+                                                         aria-valuenow="{{ (case.confidence * 100)|round(1) }}" 
+                                                         aria-valuemin="0" 
+                                                         aria-valuemax="100">
+                                                        {{ "%.1f"|format(case.confidence * 100) }}%
+                            </div>
+                        </div>
+                                            {% else %}
+                                                <span class="text-muted">لا يوجد تشخيص</span>
+                                            {% endif %}
+                                        </td>
+                                        <td>{{ case.created_at.split('T')[0] if case.created_at else 'غير محدد' }}</td>
+                                        <td>
+                                            <div class="btn-group" role="group">
+                                                {% if session.user_type in ['admin', 'doctor'] %}
+                                                <a href="{{ url_for('case_management', case_id=case.id) }}" 
+                                                   class="btn btn-sm btn-primary" 
+                                                   title="سجل التشخيصات">
+                                                    <i class="fas fa-history"></i> سجل التشخيصات
+                                                </a>
+                                                {% endif %}
+                                                <a href="{{ url_for('case_details', case_id=case.id) }}" 
+                                                   class="btn btn-sm btn-info" 
+                                                   title="عرض التفاصيل">
+                                                    <i class="fas fa-eye"></i>
+                                                </a>
+                                                {% if session.user_type == 'admin' %}
+                                                <button type="button" 
+                                                        class="btn btn-sm btn-danger" 
+                                                        onclick="deleteCase('{{ case.id }}')"
+                                                        title="حذف الحالة">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                {% endif %}
+                            </div>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                        <script>
+                        // دوال بسيطة للبحث والمسح
+                        function searchFunction() {
+                            console.log('🔍 تم الضغط على زر البحث');
+                            
+                            var input = document.getElementById('searchInput').value.toLowerCase();
+                            var disease = document.getElementById('diseaseFilter').value;
+                            var date = document.getElementById('dateFilter').value;
+                            var rows = document.querySelectorAll('#casesTable tbody tr');
+                            var anyVisible = false;
+                            
+                            console.log('معايير البحث:', { input: input, disease: disease, date: date });
+                            
+                            rows.forEach(function(row, index) {
+                                var nameCell = row.querySelector('td:nth-child(2)');
+                                var diseaseCell = row.querySelector('td:nth-child(3) .badge');
+                                var dateCell = row.querySelector('td:nth-child(5)');
+                                
+                                var nameMatch = true;
+                                var diseaseMatch = true;
+                                var dateMatch = true;
+                                
+                                if (input) {
+                                    var nameText = nameCell ? nameCell.textContent.toLowerCase() : '';
+                                    nameMatch = nameText.indexOf(input) > -1;
+                                }
+                                
+                                if (disease) {
+                                    if (diseaseCell) {
+                                        var diseaseCode = diseaseCell.getAttribute('data-disease-code');
+                                        diseaseMatch = (diseaseCode === disease);
+                                    } else {
+                                        diseaseMatch = false;
+                                    }
+                                }
+                                
+                                if (date) {
+                                    var rowDate = dateCell ? dateCell.textContent.trim() : '';
+                                    dateMatch = (rowDate === date);
+                                }
+                                
+                                if (nameMatch && diseaseMatch && dateMatch) {
+                                    row.style.display = '';
+                                    anyVisible = true;
+                                } else {
+                                    row.style.display = 'none';
+                                }
+                            });
+                            
+                            // إظهار رسالة "لا توجد نتائج" إذا لم يتم العثور على أي شيء
+                            var noResultsDiv = document.getElementById('noResults');
+                            if (!anyVisible) {
+                                if (!noResultsDiv) {
+                                    var table = document.getElementById('casesTable');
+                                    var noResults = document.createElement('div');
+                                    noResults.id = 'noResults';
+                                    noResults.className = 'text-center py-4';
+                                    noResults.innerHTML = '<i class="fas fa-search fa-2x text-muted mb-2"></i><p class="text-muted">لا توجد نتائج تطابق معايير البحث</p>';
+                                    table.parentNode.insertBefore(noResults, table.nextSibling);
+                                }
+                            } else {
+                                if (noResultsDiv) {
+                                    noResultsDiv.remove();
+                                }
+                            }
+                        }
+                        
+                        function clearFunction() {
+                            console.log('🧹 تم الضغط على زر المسح');
+                            
+                            document.getElementById('searchInput').value = '';
+                            document.getElementById('diseaseFilter').value = '';
+                            document.getElementById('dateFilter').value = '';
+                            
+                            var rows = document.querySelectorAll('#casesTable tbody tr');
+                            rows.forEach(function(row) {
+                                row.style.display = '';
+                            });
+                            
+                            // إزالة رسالة "لا توجد نتائج" عند المسح
+                            var noResultsDiv = document.getElementById('noResults');
+                            if (noResultsDiv) {
+                                noResultsDiv.remove();
+                            }
+                        }
+                        
+                        // ربط Enter في حقل البحث
+                        document.addEventListener('DOMContentLoaded', function() {
+                            var searchInput = document.getElementById('searchInput');
+                            if (searchInput) {
+                                searchInput.addEventListener('keyup', function(e) {
+                                    if (e.key === 'Enter') {
+                                        searchFunction();
+                                    }
+                                });
+                            }
+                        });
+                        </script>
+            {% else %}
+                    <div class="text-center py-5">
+                        <i class="fas fa-folder-open fa-3x text-muted mb-3"></i>
+                            <h5 class="text-muted">لا توجد حالات مسجلة</h5>
+                            <p class="text-muted">ابدأ بتشخيص حالة جديدة لرؤية النتائج هنا</p>
+                            {% if session.user_type in ['admin', 'doctor'] %}
+                            <a href="{{ url_for('add_case') }}" class="btn btn-primary">
+                                <i class="fas fa-plus me-1"></i>
+                                إدراج حالة جديدة
+                            </a>
+                            {% else %}
+                            <a href="{{ url_for('diagnose') }}" class="btn btn-primary">
+                                <i class="fas fa-plus me-1"></i>
+                                تشخيص جديد
+                            </a>
+            {% endif %}
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function deleteCase(caseId) {
+    if (confirm('هل أنت متأكد من حذف هذه الحالة؟')) {
+        fetch(`/delete_case/${caseId}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                window.location.reload();
+            } else {
+                alert('حدث خطأ أثناء حذف الحالة');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('حدث خطأ أثناء حذف الحالة');
+        });
+    }
+    }
+</script>
+{% endblock %} 

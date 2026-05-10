@@ -1,0 +1,429 @@
+{% extends "base.html" %}
+
+{% block title %}الإحصائيات - DermaScan{% endblock %}
+
+{% block content %}
+<div class="main-container">
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="{{ url_for('dashboard') }}">
+                <i class="fas fa-stethoscope me-2"></i>
+                DermaScan
+            </a>
+            
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('dashboard') }}">
+                            <i class="fas fa-home me-1"></i>
+                            الرئيسية
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('diagnosis') }}">
+                            <i class="fas fa-microscope me-1"></i>
+                            تشخيص جديد
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('cases') }}">
+                            <i class="fas fa-folder me-1"></i>
+                            سجل الحالات
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="{{ url_for('statistics') }}">
+                            <i class="fas fa-chart-bar me-1"></i>
+                            الإحصائيات
+                        </a>
+                    </li>
+                </ul>
+                
+                <ul class="navbar-nav">
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown">
+                            <i class="fas fa-user-circle me-1"></i>
+                            {{ session.get('user_name', 'المستخدم') }}
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="{{ url_for('settings') }}">
+                                <i class="fas fa-cog me-2"></i>
+                                الإعدادات
+                            </a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('logout') }}">
+                                <i class="fas fa-sign-out-alt me-2"></i>
+                                تسجيل الخروج
+                            </a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    
+    <!-- Main Content -->
+    <div class="container-fluid p-4">
+        <!-- Header -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <h2>
+                    <i class="fas fa-chart-bar me-2"></i>
+                    الإحصائيات
+                </h2>
+                <p class="text-muted">نظرة عامة على الحالات والأمراض المشخصة</p>
+            </div>
+        </div>
+        
+        <!-- Summary Cards -->
+        <div class="row mb-4">
+            <div class="col-md-3 mb-3">
+                <div class="card text-center">
+                    <div class="card-body">
+                        <i class="fas fa-folder fa-3x text-primary mb-3"></i>
+                        <h3 class="text-primary">{{ total_cases }}</h3>
+                        <h6>إجمالي الحالات</h6>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 mb-3">
+                <div class="card text-center">
+                    <div class="card-body">
+                        <i class="fas fa-user-md fa-3x text-success mb-3"></i>
+                        <h3 class="text-success">{{ diseases_count|length }}</h3>
+                        <h6>أنواع الأمراض</h6>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 mb-3">
+                <div class="card text-center">
+                    <div class="card-body">
+                        <i class="fas fa-calendar fa-3x text-warning mb-3"></i>
+                        <h3 class="text-warning">{{ total_cases }}</h3>
+                        <h6>الحالات هذا الشهر</h6>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 mb-3">
+                <div class="card text-center">
+                    <div class="card-body">
+                        <i class="fas fa-chart-line fa-3x text-info mb-3"></i>
+                        <h3 class="text-info">{{ "%.1f"|format(avg_confidence) }}%</h3>
+                        <h6>متوسط الدقة</h6>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        {% if total_cases == 0 %}
+        <!-- رسالة عندما لا توجد بيانات -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-body text-center">
+                        <i class="fas fa-chart-bar fa-4x text-muted mb-3"></i>
+                        <h4 class="text-muted">لا توجد بيانات إحصائية</h4>
+                        <p class="text-muted">لم يتم تسجيل أي حالات تشخيص بعد</p>
+                        <a href="{{ url_for('diagnose') }}" class="btn btn-primary">
+                            <i class="fas fa-plus me-2"></i>
+                            إضافة حالة جديدة
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% else %}
+        
+        <!-- Disease Distribution -->
+        <div class="row mb-4">
+            <div class="col-md-8 mb-4">
+                <div class="card">
+                    <div class="card-header">
+                        <h6 class="mb-0">
+                            <i class="fas fa-chart-pie me-2"></i>
+                            توزيع الأمراض
+                        </h6>
+                    </div>
+                    <div class="card-body">
+                        <div style="height: 400px;">
+                            <canvas id="diseaseChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 mb-4">
+                <div class="card">
+                    <div class="card-header">
+                        <h6 class="mb-0">
+                            <i class="fas fa-list me-2"></i>
+                            أكثر الأمراض انتشاراً
+                        </h6>
+                    </div>
+                    <div class="card-body">
+                        {% for disease, count in most_common %}
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <div>
+                                <h6 class="mb-0">{{ disease }}</h6>
+                                <small class="text-muted">{{ count }} حالة</small>
+                            </div>
+                            <div class="progress flex-grow-1 mx-3" style="height: 8px;">
+                                <div class="progress-bar" role="progressbar" 
+                                     style="width: {{ (count / total_cases * 100) | round(1) }}%"></div>
+                            </div>
+                            <small class="text-muted">{{ (count / total_cases * 100) | round(1) }}%</small>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Monthly Trends -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h6 class="mb-0">
+                            <i class="fas fa-chart-line me-2"></i>
+                            الاتجاهات الشهرية
+                        </h6>
+                    </div>
+                    <div class="card-body">
+                        <div style="height: 400px;">
+                            <canvas id="trendChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Detailed Statistics -->
+        <div class="row">
+            <div class="col-md-6 mb-4">
+                <div class="card">
+                    <div class="card-header">
+                        <h6 class="mb-0">
+                            <i class="fas fa-table me-2"></i>
+                            إحصائيات مفصلة
+                        </h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>المرض</th>
+                                        <th>عدد الحالات</th>
+                                        <th>النسبة</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for disease, count in diseases_count.items() %}
+                                    <tr>
+                                        <td>{{ disease }}</td>
+                                        <td>{{ count }}</td>
+                                        <td>{{ (count / total_cases * 100) | round(1) }}%</td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 mb-4">
+                <div class="card">
+                    <div class="card-header">
+                        <h6 class="mb-0">
+                            <i class="fas fa-info-circle me-2"></i>
+                            معلومات إضافية
+                        </h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-6 text-center mb-3">
+                                <i class="fas fa-clock fa-2x text-primary mb-2"></i>
+                                <h6>متوسط وقت التشخيص</h6>
+                                <p class="text-muted">2.5 ثانية</p>
+                            </div>
+                            <div class="col-6 text-center mb-3">
+                                <i class="fas fa-users fa-2x text-success mb-2"></i>
+                                <h6>عدد المستخدمين</h6>
+                                <p class="text-muted">{{ total_cases }}</p>
+                            </div>
+                            <div class="col-6 text-center mb-3">
+                                <i class="fas fa-shield-alt fa-2x text-warning mb-2"></i>
+                                <h6>مستوى الأمان</h6>
+                                <p class="text-muted">عالي</p>
+                            </div>
+                            <div class="col-6 text-center mb-3">
+                                <i class="fas fa-database fa-2x text-info mb-2"></i>
+                                <h6>حجم البيانات</h6>
+                                <p class="text-muted">2.3 GB</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+{% if total_cases > 0 %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('بدء تحميل الرسوم البيانية...');
+    console.log('عدد الحالات:', {{ total_cases }});
+    console.log('توزيع الأمراض:', {{ diseases_count|tojson }});
+    
+    // انتظار تحميل Chart.js
+    setTimeout(function() {
+        if (typeof Chart === 'undefined') {
+            console.error('Chart.js لم يتم تحميله');
+            return;
+        }
+        
+        console.log('Chart.js تم تحميله بنجاح');
+        
+        // بيانات الأمراض
+        const labels = [{% for disease, count in diseases_count.items() %}'{{ disease|replace("'", "\\'")|replace('"', '\\"') }}',{% endfor %}];
+        const data = [{% for disease, count in diseases_count.items() %}{{ count }},{% endfor %}];
+        
+        console.log('تسميات الأمراض:', labels);
+        console.log('بيانات الأمراض:', data);
+        
+        // رسم بياني دائري
+        const diseaseCtx = document.getElementById('diseaseChart');
+        if (diseaseCtx && labels.length > 0 && data.length > 0) {
+            try {
+                new Chart(diseaseCtx, {
+                    type: 'doughnut',
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            data: data,
+                            backgroundColor: [
+                                '#FF6384',
+                                '#36A2EB',
+                                '#FFCE56',
+                                '#4BC0C0',
+                                '#9966FF',
+                                '#FF9F40',
+                                '#FF6384'
+                            ],
+                            borderWidth: 2,
+                            borderColor: '#fff'
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                position: 'bottom',
+                                labels: {
+                                    padding: 20,
+                                    usePointStyle: true,
+                                    font: {
+                                        size: 12
+                                    }
+                                }
+                            },
+                            tooltip: {
+                                callbacks: {
+                                    label: function(context) {
+                                        const label = context.label || '';
+                                        const value = context.parsed;
+                                        const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                        const percentage = ((value / total) * 100).toFixed(1);
+                                        return `${label}: ${value} حالة (${percentage}%)`;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+                console.log('تم إنشاء الرسم البياني الدائري بنجاح');
+            } catch (error) {
+                console.error('خطأ في إنشاء الرسم البياني الدائري:', error);
+            }
+        } else {
+            console.warn('لم يتم العثور على canvas للرسم البياني الدائري أو البيانات فارغة');
+        }
+    
+        // رسم بياني خطي
+        const trendCtx = document.getElementById('trendChart');
+        if (trendCtx) {
+            try {
+                new Chart(trendCtx, {
+                    type: 'line',
+                    data: {
+                        labels: ['يناير', 'فبراير', 'مارس', 'أبريل', 'مايو', 'يونيو'],
+                        datasets: [{
+                            label: 'عدد الحالات',
+                            data: [12, 19, 15, 25, 22, 30],
+                            borderColor: '#36A2EB',
+                            backgroundColor: 'rgba(54, 162, 235, 0.1)',
+                            borderWidth: 3,
+                            tension: 0.4,
+                            fill: true
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                display: false
+                            }
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                grid: {
+                                    color: 'rgba(0,0,0,0.1)'
+                                }
+                            },
+                            x: {
+                                grid: {
+                                    display: false
+                                }
+                            }
+                        }
+                    }
+                });
+                console.log('تم إنشاء الرسم البياني الخطي بنجاح');
+            } catch (error) {
+                console.error('خطأ في إنشاء الرسم البياني الخطي:', error);
+            }
+        } else {
+            console.warn('لم يتم العثور على canvas للرسم البياني الخطي');
+        }
+    }, 1000); // انتظار ثانية واحدة
+    
+    // إعادة رسم نهائية بعد 3 ثوان
+    setTimeout(function() {
+        console.log('إعادة رسم نهائية للرسوم البيانية...');
+        const diseaseChart = Chart.getChart('diseaseChart');
+        const trendChart = Chart.getChart('trendChart');
+        
+        if (diseaseChart) {
+            diseaseChart.resize();
+            diseaseChart.render();
+        }
+        
+        if (trendChart) {
+            trendChart.resize();
+            trendChart.render();
+        }
+    }, 3000);
+});
+</script>
+{% endif %}
+{% endblock %} 

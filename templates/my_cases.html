@@ -1,0 +1,274 @@
+{% extends "base.html" %}
+
+{% block title %}سجل الحالات الخاصة - DermaScan{% endblock %}
+
+{% block content %}
+<div class="main-container">
+    <!-- شريط التنقل -->
+    <nav class="navbar navbar-expand-lg">
+        <div class="container-fluid">
+            <!-- شعار التطبيق -->
+            <a class="navbar-brand" href="{{ url_for('dashboard') }}">
+                <i class="fas fa-stethoscope me-2"></i>
+                DermaScan
+            </a>
+            
+            <!-- زر القائمة للموبايل -->
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            
+            <!-- قائمة التنقل -->
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <!-- الصفحة الرئيسية -->
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('dashboard') }}">
+                            <i class="fas fa-home me-1"></i>
+                            الرئيسية
+                        </a>
+                    </li>
+                    <!-- صفحة التشخيص الجديد -->
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('diagnose') }}">
+                            <i class="fas fa-microscope me-1"></i>
+                            تشخيص جديد
+                        </a>
+                    </li>
+                    <!-- سجل الحالات -->
+                    <li class="nav-item">
+                        <a class="nav-link active" href="{{ url_for('my_cases') }}">
+                            <i class="fas fa-folder me-1"></i>
+                            سجل الحالات
+                        </a>
+                    </li>
+                    <!-- الإعدادات -->
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('settings') }}">
+                            <i class="fas fa-cog me-1"></i>
+                            الإعدادات
+                        </a>
+                    </li>
+                </ul>
+                
+                <!-- قائمة المستخدم -->
+                <ul class="navbar-nav">
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown">
+                            <i class="fas fa-user-circle me-1"></i>
+                            {{ session.get('user_name', 'المستخدم') }}
+                            <span class="user-badge ms-1 badge bg-primary">
+                                <i class="fas fa-user me-1"></i>مستخدم
+                            </span>
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="{{ url_for('settings') }}">
+                                <i class="fas fa-cog me-2"></i>
+                                الإعدادات
+                            </a></li>
+                            
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="{{ url_for('logout') }}">
+                                <i class="fas fa-sign-out-alt me-2"></i>
+                                تسجيل الخروج
+                            </a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    
+    <!-- المحتوى الرئيسي -->
+    <div class="container-fluid p-4">
+        <!-- عنوان الصفحة -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="card border-primary">
+                    <div class="card-body text-center">
+                        <h2 class="card-title mb-3">
+                            <i class="fas fa-folder-open me-2 text-primary"></i>
+                            سجل الحالات الخاصة بك
+                        </h2>
+                        <p class="card-text lead">
+                            هنا يمكنك عرض جميع الحالات والتشخيصات التي قمت بها
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- إحصائيات سريعة -->
+        <div class="row mb-4">
+            <div class="col-md-3">
+                <div class="card bg-primary text-white">
+                    <div class="card-body text-center">
+                        <i class="fas fa-folder fa-2x mb-2"></i>
+                        <h5>إجمالي الحالات</h5>
+                        <h3>{{ cases|length }}</h3>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card bg-success text-white">
+                    <div class="card-body text-center">
+                        <i class="fas fa-microscope fa-2x mb-2"></i>
+                        <h5>التشخيصات</h5>
+                        <h3>
+                            {% set total_diagnoses = 0 %}
+                            {% for case in cases %}
+                                {% if case.diagnoses %}
+                                    {% set total_diagnoses = total_diagnoses + case.diagnoses|length %}
+                                {% endif %}
+                            {% endfor %}
+                            {{ total_diagnoses }}
+                        </h3>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card bg-info text-white">
+                    <div class="card-body text-center">
+                        <i class="fas fa-calendar fa-2x mb-2"></i>
+                        <h5>آخر تشخيص</h5>
+                        <h6>
+                            {% if cases %}
+                                {% set latest_case = cases|sort(attribute='created_at', reverse=true)|first %}
+                                {{ latest_case.created_at.split('T')[0] if latest_case.created_at else 'غير محدد' }}
+                            {% else %}
+                                غير محدد
+                            {% endif %}
+                        </h6>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card bg-warning text-white">
+                    <div class="card-body text-center">
+                        <i class="fas fa-chart-line fa-2x mb-2"></i>
+                        <h5>معدل الثقة</h5>
+                        <h6>
+                            {% set total_confidence = 0 %}
+                            {% set confidence_count = 0 %}
+                            {% for case in cases %}
+                                {% if case.diagnoses %}
+                                    {% for diagnosis in case.diagnoses %}
+                                        {% set total_confidence = total_confidence + diagnosis.confidence %}
+                                        {% set confidence_count = confidence_count + 1 %}
+                                    {% endfor %}
+                                {% endif %}
+                            {% endfor %}
+                            {% if confidence_count > 0 %}
+                                {{ "%.1f"|format((total_confidence / confidence_count) * 100) }}%
+                            {% else %}
+                                0%
+                            {% endif %}
+                        </h6>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- جدول الحالات -->
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0">
+                            <i class="fas fa-list me-2"></i>
+                            قائمة الحالات
+                        </h5>
+                        <a href="{{ url_for('diagnose') }}" class="btn btn-primary">
+                            <i class="fas fa-plus me-1"></i>
+                            تشخيص جديد
+                        </a>
+                    </div>
+                    <div class="card-body">
+                        {% if cases %}
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead class="table-dark">
+                                    <tr>
+                                        <th>رقم الحالة</th>
+                                        <th>التاريخ</th>
+                                        <th>عدد التشخيصات</th>
+                                        <th>آخر تشخيص</th>
+                                        <th>معدل الثقة</th>
+                                        <th>الإجراءات</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for case in cases|sort(attribute='created_at', reverse=true) %}
+                                    <tr>
+                                        <td>
+                                            <span class="badge bg-primary">{{ case.case_number }}</span>
+                                        </td>
+                                        <td>{{ case.created_at.split('T')[0] if case.created_at else 'غير محدد' }}</td>
+                                        <td>
+                                            <span class="badge bg-info">
+                                                {{ case.diagnoses|length if case.diagnoses else 0 }}
+                                            </span>
+                                        </td>
+                                        <td>
+                                            {% if case.diagnoses %}
+                                                {% set latest_diagnosis = case.diagnoses|sort(attribute='created_at', reverse=true)|first %}
+                                                <span class="badge bg-success">
+                                                    {{ latest_diagnosis.disease_arabic if latest_diagnosis.disease_arabic else latest_diagnosis.disease_english }}
+                                                </span>
+                                            {% else %}
+                                                <span class="text-muted">لا يوجد</span>
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            {% if case.diagnoses %}
+                                                {% set avg_confidence = 0 %}
+                                                {% set count = 0 %}
+                                                {% for diagnosis in case.diagnoses %}
+                                                    {% set avg_confidence = avg_confidence + diagnosis.confidence %}
+                                                    {% set count = count + 1 %}
+                                                {% endfor %}
+                                                {% set avg_confidence = (avg_confidence / count) * 100 %}
+                                                <div class="progress" style="height: 20px;">
+                                                    <div class="progress-bar" role="progressbar" 
+                                                         style="width: {{ avg_confidence }}%;" 
+                                                         aria-valuenow="{{ avg_confidence }}" 
+                                                         aria-valuemin="0" aria-valuemax="100">
+                                                        {{ "%.1f"|format(avg_confidence) }}%
+                                                    </div>
+                                                </div>
+                                            {% else %}
+                                                <span class="text-muted">لا يوجد</span>
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            <div class="btn-group" role="group">
+                                                <a href="{{ url_for('case_details', case_id=case.id) }}" 
+                                                   class="btn btn-sm btn-info" 
+                                                   title="عرض التفاصيل">
+                                                    <i class="fas fa-eye"></i>
+                                                </a>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                        {% else %}
+                        <div class="text-center py-5">
+                            <i class="fas fa-folder-open fa-4x text-muted mb-4"></i>
+                            <h4 class="text-muted mb-3">لا توجد حالات بعد</h4>
+                            <p class="text-muted mb-4">ابدأ بتشخيص جديد لرؤية النتائج هنا</p>
+                            <a href="{{ url_for('diagnose') }}" class="btn btn-primary btn-lg">
+                                <i class="fas fa-microscope me-2"></i>
+                                بدء التشخيص الأول
+                            </a>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

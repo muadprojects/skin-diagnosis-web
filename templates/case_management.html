@@ -1,0 +1,430 @@
+{% extends "base.html" %}
+
+{% block title %}إدارة الحالة - DermaScan{% endblock %}
+
+{% block content %}
+<div class="main-container">
+    <div class="container-fluid p-4">
+        <div class="row">
+            <!-- معلومات المريض -->
+            <div class="col-lg-4 mb-4">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="mb-0">
+                            <i class="fas fa-user-circle me-2"></i>
+                            معلومات المريض
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row mb-3">
+                            <div class="col-4">
+                                <strong>رقم الحالة:</strong>
+                            </div>
+                            <div class="col-8">
+                                <span class="badge bg-primary">{{ case.case_number }}</span>
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-4">
+                                <strong>اسم المريض:</strong>
+                            </div>
+                            <div class="col-8">
+                                {{ case.patient_name }}
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-4">
+                                <strong>العمر:</strong>
+                            </div>
+                            <div class="col-8">
+                                {{ case.patient_age }} سنة
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-4">
+                                <strong>رقم الهاتف:</strong>
+                            </div>
+                            <div class="col-8">
+                                <a href="tel:{{ case.patient_phone }}" class="text-decoration-none">
+                                    <i class="fas fa-phone me-1"></i>
+                                    {{ case.patient_phone }}
+                                </a>
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-4">
+                                <strong>تاريخ الإنشاء:</strong>
+                            </div>
+                            <div class="col-8">
+                                {{ case.created_at.split('T')[0] if case.created_at else 'غير محدد' }}
+                            </div>
+                        </div>
+                        {% if case.notes %}
+                        <div class="row mb-3">
+                            <div class="col-12">
+                                <strong>ملاحظات:</strong>
+                                <p class="text-muted mt-1">{{ case.notes }}</p>
+                            </div>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- إضافة تشخيص جديد -->
+            <div class="col-lg-8 mb-4">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="mb-0">
+                            <i class="fas fa-plus-circle me-2"></i>
+                            إضافة تشخيص جديد
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        {% if error %}
+                        <div class="alert alert-danger">
+                            <i class="fas fa-exclamation-triangle me-2"></i>
+                            {{ error }}
+                        </div>
+                        {% endif %}
+                        
+                        {% if success %}
+                        <div class="alert alert-success">
+                            <i class="fas fa-check-circle me-2"></i>
+                            {{ success }}
+                        </div>
+                        {% endif %}
+
+                        <form method="POST" enctype="multipart/form-data" class="needs-validation" novalidate>
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="image" class="form-label">
+                                        <i class="fas fa-camera me-1"></i>
+                                        صورة الحالة *
+                                    </label>
+                                    <input type="file" 
+                                           class="form-control" 
+                                           id="image" 
+                                           name="image" 
+                                           accept="image/*" 
+                                           required>
+                                    <div class="invalid-feedback">
+                                        يرجى اختيار صورة للحالة
+                                    </div>
+                                </div>
+                                
+                                <div class="col-md-6 mb-3">
+                                    <label for="diagnosis_notes" class="form-label">
+                                        <i class="fas fa-sticky-note me-1"></i>
+                                        ملاحظات التشخيص
+                                    </label>
+                                    <textarea class="form-control" 
+                                              id="diagnosis_notes" 
+                                              name="diagnosis_notes" 
+                                              rows="3" 
+                                              placeholder="ملاحظات إضافية حول التشخيص..."></textarea>
+                                </div>
+                            </div>
+
+                            <div class="d-flex justify-content-between">
+                                <a href="{{ url_for('cases') }}" class="btn btn-secondary">
+                                    <i class="fas fa-arrow-right me-1"></i>
+                                    رجوع
+                                </a>
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="fas fa-search me-1"></i>
+                                    تشخيص الحالة
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- عرض أحدث تشخيص -->
+        {% if case.diagnoses and case.diagnoses|length > 0 %}
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="mb-0">
+                            <i class="fas fa-stethoscope me-2"></i>
+                            أحدث تشخيص
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        {% set latest_diagnosis = case.diagnoses[-1] %}
+                        <div class="row">
+                            <div class="col-md-4">
+                                <img src="{{ url_for('static', filename='uploads/' + latest_diagnosis.image_path) }}" 
+                                     alt="صورة التشخيص" 
+                                     class="img-fluid rounded" 
+                                     style="max-height: 300px;">
+                            </div>
+                            <div class="col-md-8">
+                                <div class="row">
+                                    <div class="col-12 mb-3">
+                                        <label class="form-label fw-bold">المرض المشخص:</label>
+                                        {% if latest_diagnosis.disease in ['akiec', 'bcc', 'bkl', 'df', 'mel', 'nv', 'vasc'] %}
+                                            {% set disease_code = latest_diagnosis.disease %}
+                                            {% if disease_code == 'akiec' %}
+                                                <p class="text-primary fs-5">التقرن الشعاعي (Actinic keratoses)</p>
+                                            {% elif disease_code == 'bcc' %}
+                                                <p class="text-primary fs-5">سرطان الخلايا القاعدية (Basal cell carcinoma)</p>
+                                            {% elif disease_code == 'bkl' %}
+                                                <p class="text-primary fs-5">آفات شبيهة بالتقرن الحميد (Benign keratosis-like lesions)</p>
+                                            {% elif disease_code == 'df' %}
+                                                <p class="text-primary fs-5">الورم الليفي الجلدي (Dermatofibroma)</p>
+                                            {% elif disease_code == 'mel' %}
+                                                <p class="text-primary fs-5">سرطان الجلد الميلانيني (Melanoma)</p>
+                                            {% elif disease_code == 'nv' %}
+                                                <p class="text-primary fs-5">الشامات الميلانينية (Melanocytic nevi)</p>
+                                            {% elif disease_code == 'vasc' %}
+                                                <p class="text-primary fs-5">آفات الأوعية الدموية (Vascular lesions)</p>
+                                            {% endif %}
+                                        {% else %}
+                                            <p class="text-primary fs-5">{{ latest_diagnosis.disease_arabic or latest_diagnosis.disease_english or latest_diagnosis.disease }}</p>
+                                        {% endif %}
+                                    </div>
+                                    
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-label fw-bold">رمز المرض:</label>
+                                        <p class="text-muted"><code>{{ latest_diagnosis.disease }}</code></p>
+                                    </div>
+                                    
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-label fw-bold">نسبة الثقة:</label>
+                                        <div class="progress mb-2">
+                                            <div class="progress-bar bg-success" 
+                                                 role="progressbar" 
+                                                 style="width: {{ (latest_diagnosis.confidence * 100) | round(1) }}%"
+                                                 aria-valuenow="{{ (latest_diagnosis.confidence * 100) | round(1) }}" 
+                                                 aria-valuemin="0" 
+                                                 aria-valuemax="100">
+                                                {{ (latest_diagnosis.confidence * 100) | round(1) }}%
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- جميع الأمراض مع نسبها -->
+                                    {% if latest_diagnosis.all_diseases %}
+                                    <div class="col-12 mb-4">
+                                        <label class="form-label fw-bold">
+                                            <i class="fas fa-list me-2"></i>
+                                            جميع الأمراض المحتملة
+                                        </label>
+                                        <div class="table-responsive">
+                                            <table class="table table-striped table-hover">
+                                                <thead class="table-dark">
+                                                    <tr>
+                                                        <th>#</th>
+                                                        <th>المرض</th>
+                                                        <th>الاسم الكامل</th>
+                                                        <th>النسبة المئوية</th>
+                                                        <th>شريط التقدم</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    {% for disease in latest_diagnosis.all_diseases %}
+                                                    <tr class="{% if loop.index == 1 %}table-success{% endif %}">
+                                                        <td>{{ loop.index }}</td>
+                                                        <td>
+                                                            <strong>{{ disease.arabic_name }}</strong>
+                                                            {% if loop.index == 1 %}
+                                                                <i class="fas fa-trophy text-warning ms-1" title="المرض الأكثر احتمالاً"></i>
+                                                            {% endif %}
+                                                        </td>
+                                                        <td>
+                                                            <strong>{{ disease.arabic_name }}</strong>
+                                                            {% if loop.index == 1 %}
+                                                                <i class="fas fa-trophy text-warning ms-1" title="المرض الأكثر احتمالاً"></i>
+                                                            {% endif %}
+                                                            <div class="text-muted small">{{ disease.name }}</div>
+                                                        </td>
+                                                        <td>
+                                                            <span class="badge 
+                                                                {% if disease.percentage >= 50 %}bg-success
+                                                                {% elif disease.percentage >= 20 %}bg-warning
+                                                                {% else %}bg-secondary{% endif %}">
+                                                                {{ "%.2f"|format(disease.percentage) }}%
+                                                            </span>
+                                                        </td>
+                                                        <td>
+                                                            <div class="progress" style="height: 20px;">
+                                                                <div class="progress-bar 
+                                                                    {% if disease.percentage >= 50 %}bg-success
+                                                                    {% elif disease.percentage >= 20 %}bg-warning
+                                                                    {% else %}bg-secondary{% endif %}" 
+                                                                    role="progressbar" 
+                                                                    style="width: {{ disease.percentage }}%"
+                                                                    title="{{ disease.arabic_name }}: {{ "%.2f"|format(disease.percentage) }}%">
+                                                                </div>
+                                                            </div>
+                                                        </td>
+                                                    </tr>
+                                                    {% endfor %}
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                        <small class="text-muted">
+                                            <i class="fas fa-info-circle me-1"></i>
+                                            الجدول يعرض جميع الأمراض السبعة المحتملة مرتبة حسب الاحتمالية
+                                        </small>
+                                    </div>
+                                    {% endif %}
+                                    
+                                    {% if latest_diagnosis.notes %}
+                                    <div class="col-12 mb-3">
+                                        <label class="form-label fw-bold">الملاحظات:</label>
+                                        <p class="text-muted">{{ latest_diagnosis.notes }}</p>
+                                    </div>
+                                    {% endif %}
+                                    
+                                    <div class="col-12 mb-3">
+                                        <label class="form-label fw-bold">تاريخ التشخيص:</label>
+                                        <p class="text-muted">
+                                            <i class="fas fa-calendar me-1"></i>
+                                            {{ latest_diagnosis.created_at.split('T')[0] if latest_diagnosis.created_at else 'غير محدد' }}
+                                            <span class="ms-2">
+                                                <i class="fas fa-clock me-1"></i>
+                                                {{ latest_diagnosis.created_at.split('T')[1][:5] if latest_diagnosis.created_at and 'T' in latest_diagnosis.created_at else 'غير محدد' }}
+                                            </span>
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- التشخيصات السابقة -->
+        {% if case.diagnoses and case.diagnoses|length > 1 %}
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="mb-0">
+                            <i class="fas fa-history me-2"></i>
+                            التشخيصات السابقة
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead class="table-dark">
+                                    <tr>
+                                        <th>الصورة</th>
+                                        <th>التشخيص</th>
+                                        <th>نسبة الثقة</th>
+                                        <th>التاريخ</th>
+                                        <th>الإجراءات</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for diagnosis in case.diagnoses[:-1] %}
+                                    <tr>
+                                        <td>
+                                            <img src="{{ url_for('static', filename='uploads/' + diagnosis.image_path) }}" 
+                                                 alt="صورة التشخيص" 
+                                                 class="img-thumbnail" 
+                                                 style="width: 80px; height: 80px; object-fit: cover;">
+                                        </td>
+                                        <td>
+                                            <span class="badge bg-success">
+                                                {{ diagnosis.disease_english if diagnosis.disease_english else diagnosis.disease }}
+                                            </span>
+                                        </td>
+                                        <td>
+                                            <div class="progress" style="height: 20px;">
+                                                <div class="progress-bar bg-success" 
+                                                     role="progressbar" 
+                                                     style="width: {{ (diagnosis.confidence * 100)|round(1) }}%"
+                                                     aria-valuenow="{{ (diagnosis.confidence * 100)|round(1) }}" 
+                                                     aria-valuemin="0" 
+                                                     aria-valuemax="100">
+                                                    {{ "%.1f"|format(diagnosis.confidence * 100) }}%
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>{{ diagnosis.created_at.split('T')[0] if diagnosis.created_at else 'غير محدد' }}</td>
+                                        <td>
+                                            <a href="{{ url_for('case_details', case_id=case.id, diagnosis_id=diagnosis.id) }}" 
+                                               class="btn btn-sm btn-info" 
+                                               title="عرض التفاصيل">
+                                                <i class="fas fa-eye"></i>
+                                            </a>
+                                            <button type="button" class="btn btn-sm btn-danger" onclick="deleteDiagnosis('{{ case.id }}', '{{ diagnosis.id }}')" title="حذف التشخيص">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% elif not case.diagnoses %}
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-body text-center py-5">
+                        <i class="fas fa-microscope fa-3x text-muted mb-3"></i>
+                        <h5 class="text-muted">لا توجد تشخيصات سابقة</h5>
+                        <p class="text-muted">قم بإضافة تشخيص جديد لرؤية النتائج هنا</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<script>
+// تفعيل التحقق من صحة النموذج
+(function() {
+    'use strict';
+    window.addEventListener('load', function() {
+        var forms = document.getElementsByClassName('needs-validation');
+        var validation = Array.prototype.filter.call(forms, function(form) {
+            form.addEventListener('submit', function(event) {
+                if (form.checkValidity() === false) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                }
+                form.classList.add('was-validated');
+            }, false);
+        });
+    }, false);
+})();
+
+function deleteDiagnosis(caseId, diagnosisId) {
+    if (confirm('هل أنت متأكد من حذف هذا التشخيص؟')) {
+        fetch(`/delete_diagnosis/${caseId}/${diagnosisId}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                window.location.reload();
+            } else {
+                alert(data.message || 'حدث خطأ أثناء حذف التشخيص');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('حدث خطأ أثناء حذف التشخيص');
+        });
+    }
+}
+</script>
+{% endblock %} 

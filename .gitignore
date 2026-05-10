@@ -1,0 +1,23 @@
+
+# بيئات العمل الافتراضية
+venv/
+.venv/
+venv310/
+env/
+build/
+dist/
+
+# ملفات بايثون المؤقتة
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.pytest_cache/
+
+# ملفات النظام
+.DS_Store
+Thumbs.db
+
+# ملفات البيانات المحلية (اختياري، إذا أردت بدء قاعدة بيانات نظيفة)
+# data/*.json
+# static/uploads/*

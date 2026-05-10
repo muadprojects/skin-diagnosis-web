@@ -1,0 +1,114 @@
+[
+  {
+    "name": "الإدارة - شعيب",
+    "email": "alashhab@gmail.com",
+    "password": "admin123",
+    "type": "admin",
+    "original_name": "شعيب"
+  },
+  {
+    "name": "د. شعيب",
+    "email": "sh@gmail.com",
+    "password": "doctor123",
+    "type": "doctor",
+    "original_name": "شعيبى"
+  },
+  {
+    "name": "د. رياض",
+    "email": "a@gmail.com",
+    "password": "doctor123",
+    "type": "doctor",
+    "original_name": "رياض"
+  },
+  {
+    "name": "د. aa",
+    "email": "aa@gmail.com",
+    "password": "patient123",
+    "type": "doctor",
+    "original_name": "aa"
+  },
+  {
+    "name": "د. فيصل",
+    "email": "fa@gmail.com",
+    "password": "doctor123",
+    "type": "doctor",
+    "original_name": "فيصل"
+  },
+  {
+    "name": "د. د.عمر",
+    "email": "omar@gmail.com",
+    "password": "patient123",
+    "type": "doctor",
+    "original_name": "عمر"
+  },
+  {
+    "name": "شعيب الاشهب",
+    "email": "s@gmail.com",
+    "password": "patient123",
+    "type": "patient",
+    "original_name": "شعيب الاشهب"
+  },
+  {
+    "name": "الإدارة - الرئيسية",
+    "email": "admin@dermascan.com",
+    "password": "admin123",
+    "type": "admin",
+    "original_name": "الرئيسية"
+  },
+  {
+    "name": "خالد",
+    "email": "X@gmail.com",
+    "password": "patient123",
+    "type": "patient",
+    "original_name": "خالد"
+  },
+  {
+    "name": "ali",
+    "email": "x@gmail.com",
+    "password": "patient123",
+    "type": "patient",
+    "original_name": "ali"
+  },
+  {
+    "name": "محمد",
+    "email": "xxx@gmail.com",
+    "password": "patient123",
+    "type": "patient",
+    "original_name": "محمد"
+  },
+  {
+    "name": "علي ",
+    "email": "ali@gmail.com",
+    "password": "patient123",
+    "type": "patient",
+    "original_name": "علي "
+  },
+  {
+    "name": "ali",
+    "email": "Ali@gmail.com",
+    "password": "patient123",
+    "type": "patient",
+    "original_name": "ali"
+  },
+  {
+    "name": "محمد",
+    "email": "m@gmail.com",
+    "password": "patient123",
+    "type": "patient",
+    "original_name": "محمد"
+  },
+  {
+    "name": "اسامة ",
+    "email": "As@gmail.com",
+    "password": "1230",
+    "type": "patient",
+    "original_name": "اسامة "
+  },
+  {
+    "name": "محمد",
+    "email": "mm@gmail.com",
+    "password": "5555",
+    "type": "patient",
+    "original_name": "محمد"
+  }
+]
