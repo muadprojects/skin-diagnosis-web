@@ -46,11 +46,8 @@ def init_data():
         if acc['email'] not in emails:
             users.append(acc)
             updated = True
-    
     if updated or not os.path.exists(USERS_FILE):
-        with open(USERS_FILE, 'w', encoding='utf-8') as f:
-            json.dump(users, f, ensure_ascii=False, indent=2)
-            
+        with open(USERS_FILE, 'w', encoding='utf-8') as f: json.dump(users, f, ensure_ascii=False, indent=2)
     if not os.path.exists(CASES_FILE):
         with open(CASES_FILE, 'w', encoding='utf-8') as f: json.dump([], f)
 
@@ -72,9 +69,7 @@ def get_models():
 
 def load_json(file_path, default_value):
     try:
-        if os.path.exists(file_path):
-            with open(file_path, 'r', encoding='utf-8') as f: return json.load(f)
-        return default_value
+        with open(file_path, 'r', encoding='utf-8') as f: return json.load(f)
     except: return default_value
 
 def save_json(file_path, data):
@@ -117,10 +112,10 @@ def logout():
     session.clear()
     return redirect(url_for('login'))
 
-# دعم الاسمين لتجنب أخطاء القوالب
+# تغيير اسم الدالة ليكون diagnosis ليتوافق مع القوالب
 @app.route('/diagnose', methods=['GET', 'POST'])
 @app.route('/diagnosis', methods=['GET', 'POST'])
-def diagnose():
+def diagnosis():
     if 'user_email' not in session: return redirect(url_for('login'))
     if request.method == 'POST':
         m, bm = get_models()
@@ -147,12 +142,12 @@ def diagnose():
 
 @app.route('/statistics')
 def statistics():
-    if session.get('user_type') not in ['admin', 'doctor']: return redirect(url_for('dashboard'))
+    if 'user_email' not in session: return redirect(url_for('login'))
     cases_data = load_json(CASES_FILE, [])
     counts = {v: 0 for v in DISEASES.values()}
     for c in cases_data:
         name = DISEASES.get(c.get('disease'), 'غير معروف')
-        counts[name] = counts.get(name, 0) + 1
+        if name in counts: counts[name] += 1
     return render_template('statistics.html', total_cases=len(cases_data), diseases_count=counts, most_common=sorted(counts.items(), key=lambda x:x[1], reverse=True), avg_confidence=95)
 
 @app.route('/settings')
