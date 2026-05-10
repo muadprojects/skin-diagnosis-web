@@ -27,19 +27,23 @@ UPLOAD_FOLDER = os.path.join('static', 'uploads')
 os.makedirs(DATA_DIR, exist_ok=True)
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
+def load_json(file_path, default_value):
+    try:
+        if os.path.exists(file_path):
+            with open(file_path, 'r', encoding='utf-8') as f: return json.load(f)
+        return default_value
+    except: return default_value
+
+def save_json(file_path, data):
+    with open(file_path, 'w', encoding='utf-8') as f: json.dump(data, f, ensure_ascii=False, indent=2)
+
 def init_data():
-    users = []
-    if os.path.exists(USERS_FILE):
-        try:
-            with open(USERS_FILE, 'r', encoding='utf-8') as f: users = json.load(f)
-        except: users = []
-    
+    users = load_json(USERS_FILE, [])
     demo_accounts = [
         {'name': 'المدير العام', 'email': 'admin@dermascan.com', 'password': 'admin123', 'type': 'admin'},
         {'name': 'د. شعيب', 'email': 'doctor@test.com', 'password': '123', 'type': 'doctor'},
         {'name': 'مريض تجريبي', 'email': 'patient@test.com', 'password': '123', 'type': 'patient'}
     ]
-    
     emails = [u['email'] for u in users]
     updated = False
     for acc in demo_accounts:
@@ -47,9 +51,9 @@ def init_data():
             users.append(acc)
             updated = True
     if updated or not os.path.exists(USERS_FILE):
-        with open(USERS_FILE, 'w', encoding='utf-8') as f: json.dump(users, f, ensure_ascii=False, indent=2)
+        save_json(USERS_FILE, users)
     if not os.path.exists(CASES_FILE):
-        with open(CASES_FILE, 'w', encoding='utf-8') as f: json.dump([], f)
+        save_json(CASES_FILE, [])
 
 init_data()
 
@@ -67,15 +71,6 @@ def get_models():
         except: pass
     return model, binary_model
 
-def load_json(file_path, default_value):
-    try:
-        with open(file_path, 'r', encoding='utf-8') as f: return json.load(f)
-    except: return default_value
-
-def save_json(file_path, data):
-    with open(file_path, 'w', encoding='utf-8') as f: json.dump(data, f, ensure_ascii=False, indent=2)
-
-# الثوابت
 BINARY_CLASS_NAMES = ['non_skin', 'skin']
 DISEASES = {
     'akiec': 'التقرن الشعاعي', 'bcc': 'سرطان الخلايا القاعدية', 'bkl': 'آفات شبيهة بالتقرن الحميد',
@@ -83,17 +78,28 @@ DISEASES = {
 }
 CLASS_NAMES = ['akiec', 'bcc', 'bkl', 'df', 'mel', 'nv', 'vasc']
 
+@app.context_processor
+def inject_user_type():
+    """حقن المتغيرات الأساسية في جميع القوالب"""
+    return dict(
+        user_type=session.get('user_type', 'patient'),
+        user_name=session.get('user_name', ''),
+        user_email=session.get('user_email', '')
+    )
+
 @app.route('/')
 def dashboard():
     if 'user_email' not in session: return redirect(url_for('login'))
     cases_data = load_json(CASES_FILE, [])
     u_type = session.get('user_type', 'patient')
     u_email = session.get('user_email')
+    
     if u_type in ['admin', 'doctor']:
-        recent = sorted([c for c in cases_data if 'created_at' in c], key=lambda x: x['created_at'], reverse=True)[:5]
+        recent = sorted([c for c in cases_data if c.get('patient_name')], key=lambda x: x.get('created_at', ''), reverse=True)[:5]
     else:
         recent = sorted([c for c in cases_data if c.get('user_id') == u_email], key=lambda x: x.get('created_at', ''), reverse=True)[:5]
-    return render_template('dashboard.html', recent_cases=recent, user_name=session.get('user_name'), user_type=u_type)
+        
+    return render_template('dashboard.html', recent_cases=recent)
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -107,12 +113,23 @@ def login():
         return render_template('login.html', error="بيانات غير صحيحة")
     return render_template('login.html')
 
+@app.route('/register', methods=['GET', 'POST'])
+def register():
+    if request.method == 'POST':
+        name, email, pwd, confirm_pwd = request.form.get('name'), request.form.get('email'), request.form.get('password'), request.form.get('confirm_password')
+        if pwd != confirm_pwd: return render_template('register.html', error="كلمات المرور غير متطابقة")
+        users = load_json(USERS_FILE, [])
+        if any(u['email'] == email for u in users): return render_template('register.html', error="مسجل مسبقاً")
+        users.append({'name': name, 'email': email, 'password': pwd, 'type': 'patient'})
+        save_json(USERS_FILE, users)
+        return render_template('register.html', success="تم إنشاء الحساب بنجاح! يمكنك الآن تسجيل الدخول.")
+    return render_template('register.html')
+
 @app.route('/logout')
 def logout():
     session.clear()
     return redirect(url_for('login'))
 
-# تغيير اسم الدالة ليكون diagnosis ليتوافق مع القوالب
 @app.route('/diagnose', methods=['GET', 'POST'])
 @app.route('/diagnosis', methods=['GET', 'POST'])
 def diagnosis():
@@ -128,49 +145,65 @@ def diagnosis():
             try:
                 img = Image.open(path).convert('RGB').resize((224, 224))
                 if bm and BINARY_CLASS_NAMES[np.argmax(bm.predict(np.expand_dims(np.array(img)/255.0, 0), verbose=0)[0])] == 'non_skin':
-                    return render_template('diagnose.html', error="ليست صورة جلدية.")
+                    return render_template('diagnose.html', error="ليست صورة جلدية واضحة.")
                 pred = m.predict(preprocess_input(np.expand_dims(np.array(img), 0)), verbose=0)[0]
                 idx = np.argmax(pred)
                 code = CLASS_NAMES[idx]
-                res = {'code': code, 'arabic_name': DISEASES.get(code, code), 'percentage': float(pred[idx]*100)}
+                res = {'code': code, 'name': code, 'arabic_name': DISEASES.get(code, code), 'percentage': float(pred[idx]*100)}
                 cases_data = load_json(CASES_FILE, [])
-                cases_data.append({'id': str(uuid.uuid4()), 'user_id': session['user_email'], 'user_name': session['user_name'], 'image_path': fname, 'disease': code, 'confidence': float(pred[idx]), 'created_at': datetime.now().isoformat()})
+                cases_data.append({'id': str(uuid.uuid4()), 'user_id': session['user_email'], 'user_name': session['user_name'], 'image_path': fname, 'disease': code, 'disease_english': code, 'confidence': float(pred[idx]), 'created_at': datetime.now().isoformat()})
                 save_json(CASES_FILE, cases_data)
                 return render_template('diagnose.html', result=res, image_path=fname)
             except Exception as e: return render_template('diagnose.html', error=str(e))
     return render_template('diagnose.html')
 
-@app.route('/statistics')
-def statistics():
-    if 'user_email' not in session: return redirect(url_for('login'))
-    cases_data = load_json(CASES_FILE, [])
-    counts = {v: 0 for v in DISEASES.values()}
-    for c in cases_data:
-        name = DISEASES.get(c.get('disease'), 'غير معروف')
-        if name in counts: counts[name] += 1
-    return render_template('statistics.html', total_cases=len(cases_data), diseases_count=counts, most_common=sorted(counts.items(), key=lambda x:x[1], reverse=True), avg_confidence=95)
-
-@app.route('/settings')
-def settings():
-    if 'user_email' not in session: return redirect(url_for('login'))
-    return render_template('settings.html', user={'name': session.get('user_name'), 'email': session.get('user_email'), 'type': session.get('user_type')})
-
-@app.route('/add_case', methods=['GET', 'POST'])
-def add_case():
-    if session.get('user_type') not in ['admin', 'doctor']: return redirect(url_for('dashboard'))
-    if request.method == 'POST':
-        cases_data = load_json(CASES_FILE, [])
-        new_id = str(uuid.uuid4())
-        cases_data.append({'id': new_id, 'patient_name': request.form.get('patient_name'), 'created_at': datetime.now().isoformat(), 'diagnoses': []})
-        save_json(CASES_FILE, cases_data)
-        return redirect(url_for('cases'))
-    return render_template('add_case.html', next_case_number=1)
-
 @app.route('/cases')
 def cases():
     if 'user_email' not in session: return redirect(url_for('login'))
     cases_data = load_json(CASES_FILE, [])
-    return render_template('cases.html', cases=cases_data)
+    u_type = session.get('user_type', 'patient')
+    if u_type in ['admin', 'doctor']:
+        u_cases = [c for c in cases_data if c.get('patient_name')]
+    else:
+        u_cases = [c for c in cases_data if c.get('user_id') == session.get('user_email')]
+    return render_template('cases.html', cases=u_cases)
+
+@app.route('/my_cases')
+def my_cases():
+    if 'user_email' not in session: return redirect(url_for('login'))
+    cases_data = load_json(CASES_FILE, [])
+    m_cases = [c for c in cases_data if c.get('user_id') == session.get('user_email') or c.get('created_by') == session.get('user_email')]
+    return render_template('my_cases.html', cases=m_cases)
+
+@app.route('/add_case', methods=['GET', 'POST'])
+def add_case():
+    if session.get('user_type') not in ['admin', 'doctor']: return redirect(url_for('dashboard'))
+    cases_data = load_json(CASES_FILE, [])
+    if request.method == 'POST':
+        p_name = request.form.get('patient_name')
+        new_id = str(uuid.uuid4())
+        next_case_number = max([c.get('case_number', 0) for c in cases_data] + [0]) + 1
+        cases_data.append({'id': new_id, 'case_number': next_case_number, 'patient_name': p_name, 'patient_age': request.form.get('patient_age'), 'patient_phone': request.form.get('patient_phone'), 'created_by': session['user_email'], 'created_at': datetime.now().isoformat(), 'diagnoses': []})
+        save_json(CASES_FILE, cases_data)
+        return redirect(url_for('case_management', case_id=new_id))
+    next_case_number = max([c.get('case_number', 0) for c in cases_data] + [0]) + 1
+    return render_template('add_case.html', next_case_number=next_case_number)
+
+@app.route('/case_management/<case_id>', methods=['GET', 'POST'])
+def case_management(case_id):
+    if session.get('user_type') not in ['admin', 'doctor']: return redirect(url_for('dashboard'))
+    cases_data = load_json(CASES_FILE, [])
+    case = next((c for c in cases_data if str(c['id']) == str(case_id)), None)
+    if not case: return render_template('case_management.html', case=None, error="الحالة غير موجودة")
+    return render_template('case_management.html', case=case)
+
+@app.route('/case/<case_id>')
+def case_details(case_id):
+    if 'user_email' not in session: return redirect(url_for('login'))
+    cases_data = load_json(CASES_FILE, [])
+    case = next((c for c in cases_data if str(c['id']) == str(case_id)), None)
+    if case: return render_template('case_details.html', case=case)
+    return render_template('case_details.html', case=None, error="الحالة غير موجودة")
 
 @app.route('/manage_doctors')
 def manage_doctors():
@@ -184,26 +217,23 @@ def manage_users():
     users = load_json(USERS_FILE, [])
     return render_template('manage_users.html', patients=[u for u in users if u.get('type') == 'patient'])
 
-@app.route('/my_cases')
-def my_cases():
-    if 'user_email' not in session: return redirect(url_for('login'))
-    cases_data = load_json(CASES_FILE, [])
-    m_cases = [c for c in cases_data if c.get('user_id') == session['user_email']]
-    return render_template('my_cases.html', cases=m_cases)
-
-@app.route('/case/<case_id>')
-def case_details(case_id):
-    if 'user_email' not in session: return redirect(url_for('login'))
-    cases_data = load_json(CASES_FILE, [])
-    case = next((c for c in cases_data if str(c['id']) == str(case_id)), None)
-    return render_template('case_details.html', case=case)
-
-@app.route('/case_management/<case_id>')
-def case_management(case_id):
+@app.route('/statistics')
+def statistics():
     if session.get('user_type') not in ['admin', 'doctor']: return redirect(url_for('dashboard'))
     cases_data = load_json(CASES_FILE, [])
-    case = next((c for c in cases_data if str(c['id']) == str(case_id)), None)
-    return render_template('case_management.html', case=case)
+    f_cases = [c for c in cases_data if c.get('patient_name')]
+    counts = {}
+    for c in f_cases:
+        diag = c['diagnoses'][-1] if c.get('diagnoses') else None
+        code = diag['disease'] if diag else c.get('disease')
+        name = DISEASES.get(code, 'غير معروف')
+        counts[name] = counts.get(name, 0) + 1
+    return render_template('statistics.html', total_cases=len(f_cases), diseases_count=counts, most_common=sorted(counts.items(), key=lambda x:x[1], reverse=True), avg_confidence=95)
+
+@app.route('/settings')
+def settings():
+    if 'user_email' not in session: return redirect(url_for('login'))
+    return render_template('settings.html', user={'name': session.get('user_name'), 'email': session.get('user_email'), 'type': session.get('user_type')})
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=int(os.environ.get('PORT', 5000)))
