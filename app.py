@@ -27,24 +27,21 @@ UPLOAD_FOLDER = os.path.join('static', 'uploads')
 os.makedirs(DATA_DIR, exist_ok=True)
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
-# دالة لضمان وجود بيانات أولية للاختبار
 def init_data():
     users = []
     if os.path.exists(USERS_FILE):
         try:
-            with open(USERS_FILE, 'r', encoding='utf-8') as f:
-                users = json.load(f)
+            with open(USERS_FILE, 'r', encoding='utf-8') as f: users = json.load(f)
         except: users = []
     
-    # إضافة حسابات تجريبية إذا لم تكن موجودة
     demo_accounts = [
         {'name': 'المدير العام', 'email': 'admin@dermascan.com', 'password': 'admin123', 'type': 'admin'},
         {'name': 'د. شعيب', 'email': 'doctor@test.com', 'password': '123', 'type': 'doctor'},
         {'name': 'مريض تجريبي', 'email': 'patient@test.com', 'password': '123', 'type': 'patient'}
     ]
     
-    updated = False
     emails = [u['email'] for u in users]
+    updated = False
     for acc in demo_accounts:
         if acc['email'] not in emails:
             users.append(acc)
@@ -55,8 +52,7 @@ def init_data():
             json.dump(users, f, ensure_ascii=False, indent=2)
             
     if not os.path.exists(CASES_FILE):
-        with open(CASES_FILE, 'w', encoding='utf-8') as f:
-            json.dump([], f)
+        with open(CASES_FILE, 'w', encoding='utf-8') as f: json.dump([], f)
 
 init_data()
 
@@ -77,14 +73,12 @@ def get_models():
 def load_json(file_path, default_value):
     try:
         if os.path.exists(file_path):
-            with open(file_path, 'r', encoding='utf-8') as f:
-                return json.load(f)
+            with open(file_path, 'r', encoding='utf-8') as f: return json.load(f)
         return default_value
     except: return default_value
 
 def save_json(file_path, data):
-    with open(file_path, 'w', encoding='utf-8') as f:
-        json.dump(data, f, ensure_ascii=False, indent=2)
+    with open(file_path, 'w', encoding='utf-8') as f: json.dump(data, f, ensure_ascii=False, indent=2)
 
 # الثوابت
 BINARY_CLASS_NAMES = ['non_skin', 'skin']
@@ -100,12 +94,10 @@ def dashboard():
     cases_data = load_json(CASES_FILE, [])
     u_type = session.get('user_type', 'patient')
     u_email = session.get('user_email')
-    
     if u_type in ['admin', 'doctor']:
         recent = sorted([c for c in cases_data if 'created_at' in c], key=lambda x: x['created_at'], reverse=True)[:5]
     else:
         recent = sorted([c for c in cases_data if c.get('user_id') == u_email], key=lambda x: x.get('created_at', ''), reverse=True)[:5]
-        
     return render_template('dashboard.html', recent_cases=recent, user_name=session.get('user_name'), user_type=u_type)
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -125,12 +117,14 @@ def logout():
     session.clear()
     return redirect(url_for('login'))
 
+# دعم الاسمين لتجنب أخطاء القوالب
 @app.route('/diagnose', methods=['GET', 'POST'])
+@app.route('/diagnosis', methods=['GET', 'POST'])
 def diagnose():
     if 'user_email' not in session: return redirect(url_for('login'))
     if request.method == 'POST':
         m, bm = get_models()
-        if not m: return render_template('diagnose.html', error="الموديل جاري تحميله، حاول ثانية.")
+        if not m: return render_template('diagnose.html', error="الموديل جاري تحميله...")
         file = request.files.get('image')
         if file:
             fname = secure_filename(f"{uuid.uuid4()}_{file.filename}")
@@ -155,7 +149,7 @@ def diagnose():
 def statistics():
     if session.get('user_type') not in ['admin', 'doctor']: return redirect(url_for('dashboard'))
     cases_data = load_json(CASES_FILE, [])
-    counts = {}
+    counts = {v: 0 for v in DISEASES.values()}
     for c in cases_data:
         name = DISEASES.get(c.get('disease'), 'غير معروف')
         counts[name] = counts.get(name, 0) + 1
