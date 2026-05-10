@@ -26,8 +26,17 @@ USERS_FILE = os.path.join(DATA_DIR, 'users.json')
 CASES_FILE = os.path.join(DATA_DIR, 'cases.json')
 UPLOAD_FOLDER = os.path.join('static', 'uploads')
 
+# إنشاء المجلدات والتأكد من وجود ملفات JSON
 os.makedirs(DATA_DIR, exist_ok=True)
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+
+if not os.path.exists(USERS_FILE):
+    with open(USERS_FILE, 'w', encoding='utf-8') as f:
+        json.dump([], f)
+
+if not os.path.exists(CASES_FILE):
+    with open(CASES_FILE, 'w', encoding='utf-8') as f:
+        json.dump([], f)
 
 # متغيرات النماذج (ستحمل لاحقاً لتوفير الذاكرة)
 model = None
