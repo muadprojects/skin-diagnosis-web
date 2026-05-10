@@ -27,7 +27,6 @@ UPLOAD_FOLDER = os.path.join('static', 'uploads')
 os.makedirs(DATA_DIR, exist_ok=True)
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
-# التأكد من وجود ملفات البيانات
 for f_path in [USERS_FILE, CASES_FILE]:
     if not os.path.exists(f_path):
         with open(f_path, 'w', encoding='utf-8') as f: json.dump([], f)
@@ -72,7 +71,13 @@ def dashboard():
     if 'user_email' not in session: return redirect(url_for('login'))
     cases_data = load_json(CASES_FILE, [])
     user_type = session.get('user_type', 'patient')
-    recent = sorted([c for c in cases_data if c.get('created_at')], key=lambda x: x.get('created_at', ''), reverse=True)[:5]
+    user_email = session.get('user_email')
+    
+    if user_type in ['admin', 'doctor']:
+        recent = sorted([c for c in cases_data if c.get('created_at')], key=lambda x: x.get('created_at', ''), reverse=True)[:5]
+    else:
+        recent = sorted([c for c in cases_data if c.get('user_id') == user_email], key=lambda x: x.get('created_at', ''), reverse=True)[:5]
+        
     return render_template('dashboard.html', recent_cases=recent, user_name=session.get('user_name'), user_type=user_type)
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -85,7 +90,7 @@ def login():
         users = load_json(USERS_FILE, [])
         for u in users:
             if u['email'] == email and u.get('password') == pwd:
-                session.update({'user_email': email, 'user_name': u['name'], 'user_type': u['type']})
+                session.update({'user_email': email, 'user_name': u['name'], 'user_type': u.get('type', 'patient')})
                 return redirect(url_for('dashboard'))
         return render_template('login.html', error="بيانات غير صحيحة")
     return render_template('login.html')
@@ -136,7 +141,11 @@ def diagnose():
 def cases():
     if 'user_email' not in session: return redirect(url_for('login'))
     cases_data = load_json(CASES_FILE, [])
-    u_cases = [c for c in cases_data if (session['user_type'] in ['admin', 'doctor']) or c.get('user_id') == session['user_email']]
+    u_type = session.get('user_type')
+    if u_type in ['admin', 'doctor']:
+        u_cases = [c for c in cases_data if c.get('patient_name')]
+    else:
+        u_cases = [c for c in cases_data if c.get('user_id') == session.get('user_email')]
     return render_template('cases.html', cases=u_cases)
 
 @app.route('/add_case', methods=['GET', 'POST'])
@@ -155,21 +164,39 @@ def add_case():
 def manage_doctors():
     if session.get('user_type') != 'admin': return redirect(url_for('dashboard'))
     users = load_json(USERS_FILE, [])
-    return render_template('manage_doctors.html', doctors=[u for u in users if u['type'] == 'doctor'], patients=[u for u in users if u['type'] == 'patient'], admins=[u for u in users if u['type'] == 'admin'], total_users=len(users))
+    return render_template('manage_doctors.html', doctors=[u for u in users if u.get('type') == 'doctor'], patients=[u for u in users if u.get('type') == 'patient'], admins=[u for u in users if u.get('type') == 'admin'], total_users=len(users))
 
 @app.route('/manage_users')
 def manage_users():
     if session.get('user_type') != 'admin': return redirect(url_for('dashboard'))
     users = load_json(USERS_FILE, [])
-    return render_template('manage_users.html', patients=[u for u in users if u['type'] == 'patient'])
+    return render_template('manage_users.html', patients=[u for u in users if u.get('type') == 'patient'])
 
 @app.route('/statistics')
 def statistics():
     if session.get('user_type') not in ['admin', 'doctor']: return redirect(url_for('dashboard'))
-    return render_template('statistics.html', total_cases=0, diseases_count={}, most_common=[], avg_confidence=0)
+    cases_data = load_json(CASES_FILE, [])
+    f_cases = [c for c in cases_data if c.get('patient_name')]
+    counts = {}
+    for c in f_cases:
+        diag = c['diagnoses'][-1] if c.get('diagnoses') else None
+        code = diag['disease'] if diag else c.get('disease')
+        name = DISEASES.get(DISEASE_CODES.get(code), 'غير معروف')
+        counts[name] = counts.get(name, 0) + 1
+    
+    return render_template('statistics.html', 
+                         total_cases=len(f_cases), 
+                         diseases_count=counts, 
+                         most_common=sorted(counts.items(), key=lambda x:x[1], reverse=True), 
+                         avg_confidence=95)
 
 @app.route('/settings')
-def settings(): return render_template('settings.html')
+def settings():
+    if 'user_email' not in session: return redirect(url_for('login'))
+    user_email = session.get('user_email')
+    users = load_json(USERS_FILE, [])
+    current_user = next((u for u in users if u['email'] == user_email), {'name': session.get('user_name'), 'email': user_email})
+    return render_template('settings.html', user=current_user)
 
 @app.route('/my_cases')
 def my_cases():
