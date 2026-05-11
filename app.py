@@ -150,7 +150,6 @@ def logout():
 
 # دمج كلا المسارين (diagnose و diagnosis) لتجنب أخطاء القوالب نهائياً
 @app.route('/diagnose', methods=['GET', 'POST'])
-@app.route('/diagnosis', methods=['GET', 'POST'])
 def diagnose():
     if 'user_email' not in session: return redirect(url_for('login'))
     
@@ -223,6 +222,10 @@ def diagnose():
             except Exception as e: return render_template('diagnose.html', error="حدث خطأ أثناء التشخيص")
             
     return render_template('diagnose.html')
+
+@app.route('/diagnosis')
+def diagnosis():
+    return redirect(url_for('diagnose'))
 
 @app.route('/cases')
 def cases():
@@ -386,7 +389,7 @@ def statistics():
     if session.get('user_type') not in ['admin', 'doctor']: return redirect(url_for('dashboard'))
     
     CASES_STORAGE = load_json(CASES_FILE, [])
-    filtered_cases = [c for c in CASES_STORAGE if c.get('patient_name')]
+    filtered_cases = [c for c in CASES_STORAGE if c.get('disease') or c.get('diagnoses')]
     
     total_cases = len(filtered_cases)
     if total_cases == 0:
