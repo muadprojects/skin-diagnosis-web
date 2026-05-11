@@ -2,10 +2,10 @@
   {
     "id": "b72f06bc-8b97-4956-9a2f-e7793f47f344",
     "case_number": 1,
-    "patient_name": "علي عبدالعليبم",
+    "patient_name": "هبة",
     "patient_age": 29,
-    "patient_phone": "0915478554",
-    "notes": "مصاب بمرض السكري",
+    "patient_phone": "0910000001",
+    "notes": "حالة متابعة دورية",
     "created_by": "admin@dermascan.com",
     "created_at": "2025-07-18T06:10:24.428328",
     "diagnoses": [
@@ -23,175 +23,9 @@
             "code": "nv",
             "probability": 0.7278419137001038,
             "percentage": 72.78419137001038
-          },
-          {
-            "name": "Melanoma",
-            "arabic_name": "سرطان الجلد الميلانيني",
-            "code": "mel",
-            "probability": 0.18403181433677673,
-            "percentage": 18.403181433677673
-          },
-          {
-            "name": "Benign keratosis-like lesions",
-            "arabic_name": "آفات شبيهة بالتقرن الحميد",
-            "code": "bkl",
-            "probability": 0.0549628920853138,
-            "percentage": 5.49628920853138
-          },
-          {
-            "name": "Dermatofibroma",
-            "arabic_name": "الورم الليفي الجلدي",
-            "code": "df",
-            "probability": 0.018148690462112427,
-            "percentage": 1.8148690462112427
-          },
-          {
-            "name": "Actinic keratoses",
-            "arabic_name": "التقرن الشعاعي",
-            "code": "akiec",
-            "probability": 0.013774100691080093,
-            "percentage": 1.3774100691080093
-          },
-          {
-            "name": "Basal cell carcinoma",
-            "arabic_name": "سرطان الخلايا القاعدية",
-            "code": "bcc",
-            "probability": 0.0012406448367983103,
-            "percentage": 0.12406448367983103
-          },
-          {
-            "name": "Vascular lesions",
-            "arabic_name": "آفات الأوعية الدموية",
-            "code": "vasc",
-            "probability": 8.340923507432763e-10,
-            "percentage": 8.340923507432763e-08
           }
         ],
         "created_at": "2025-07-18T06:10:41.679422",
-        "notes": "",
-        "created_by": "admin@dermascan.com"
-      },
-      {
-        "id": "707fdec1-23e4-4abb-8118-3571ed9de8bc",
-        "image_path": "case_b72f06bc-8b97-4956-9a2f-e7793f47f344_20250718_061104_Basal_Cell_Carcinoma.jpg",
-        "disease": "nv",
-        "disease_english": "Melanocytic nevi",
-        "disease_arabic": "الشامات الميلانينية",
-        "confidence": 0.9720978140830994,
-        "all_diseases": [
-          {
-            "name": "Melanocytic nevi",
-            "arabic_name": "الشامات الميلانينية",
-            "code": "nv",
-            "probability": 0.9720978140830994,
-            "percentage": 97.20978140830994
-          },
-          {
-            "name": "Benign keratosis-like lesions",
-            "arabic_name": "آفات شبيهة بالتقرن الحميد",
-            "code": "bkl",
-            "probability": 0.017581813037395477,
-            "percentage": 1.7581813037395477
-          },
-          {
-            "name": "Melanoma",
-            "arabic_name": "سرطان الجلد الميلانيني",
-            "code": "mel",
-            "probability": 0.00572984479367733,
-            "percentage": 0.572984479367733
-          },
-          {
-            "name": "Basal cell carcinoma",
-            "arabic_name": "سرطان الخلايا القاعدية",
-            "code": "bcc",
-            "probability": 0.004570373799651861,
-            "percentage": 0.4570373799651861
-          },
-          {
-            "name": "Actinic keratoses",
-            "arabic_name": "التقرن الشعاعي",
-            "code": "akiec",
-            "probability": 1.8358114175498486e-05,
-            "percentage": 0.0018358114175498486
-          },
-          {
-            "name": "Dermatofibroma",
-            "arabic_name": "الورم الليفي الجلدي",
-            "code": "df",
-            "probability": 1.7279824078286765e-06,
-            "percentage": 0.00017279824078286765
-          },
-          {
-            "name": "Vascular lesions",
-            "arabic_name": "آفات الأوعية الدموية",
-            "code": "vasc",
-            "probability": 2.986714695007997e-11,
-            "percentage": 2.986714695007997e-09
-          }
-        ],
-        "created_at": "2025-07-18T06:11:05.144208",
-        "notes": "",
-        "created_by": "admin@dermascan.com"
-      },
-      {
-        "id": "a5345ba5-991a-4116-bf03-b436a09abd9c",
-        "image_path": "case_b72f06bc-8b97-4956-9a2f-e7793f47f344_20250720_072504_Actinic_Keratoses.webp",
-        "disease": "df",
-        "disease_english": "Dermatofibroma",
-        "disease_arabic": "الورم الليفي الجلدي",
-        "confidence": 0.6571084260940552,
-        "all_diseases": [
-          {
-            "name": "Dermatofibroma",
-            "arabic_name": "الورم الليفي الجلدي",
-            "code": "df",
-            "probability": 0.6571084260940552,
-            "percentage": 65.71084260940552
-          },
-          {
-            "name": "Actinic keratoses",
-            "arabic_name": "التقرن الشعاعي",
-            "code": "akiec",
-            "probability": 0.3181825876235962,
-            "percentage": 31.81825876235962
-          },
-          {
-            "name": "Benign keratosis-like lesions",
-            "arabic_name": "آفات شبيهة بالتقرن الحميد",
-            "code": "bkl",
-            "probability": 0.011480415239930153,
-            "percentage": 1.1480415239930153
-          },
-          {
-            "name": "Melanoma",
-            "arabic_name": "سرطان الجلد الميلانيني",
-            "code": "mel",
-            "probability": 0.009096008725464344,
-            "percentage": 0.9096008725464344
-          },
-          {
-            "name": "Basal cell carcinoma",
-            "arabic_name": "سرطان الخلايا القاعدية",
-            "code": "bcc",
-            "probability": 0.004132617264986038,
-            "percentage": 0.4132617264986038
-          },
-          {
-            "name": "Melanocytic nevi",
-            "arabic_name": "الشامات الميلانينية",
-            "code": "nv",
-            "probability": 9.388283928046803e-09,
-            "percentage": 9.388283928046803e-07
-          },
-          {
-            "name": "Vascular lesions",
-            "arabic_name": "آفات الأوعية الدموية",
-            "code": "vasc",
-            "probability": 3.8754616182856694e-10,
-            "percentage": 3.8754616182856694e-08
-          }
-        ],
-        "created_at": "2025-07-20T07:25:09.523378",
         "notes": "",
         "created_by": "admin@dermascan.com"
       }
@@ -200,200 +34,77 @@
   {
     "id": "c46393fb-8c0c-455f-8aad-26b2099f1269",
     "case_number": 2,
-    "user_id": "X@gmail.com",
-    "user_name": "خالد",
+    "user_id": "esraa@test.com",
+    "user_name": "إسراء",
     "image_path": "upload_20250718_070309_melanma.jpg",
     "disease": "vasc",
     "disease_english": "Vascular lesions",
     "confidence": 0.9513281583786011,
     "created_at": "2025-07-18T07:03:16.153317",
-    "description": "آفات الأوعية الدموية (Vascular Lesions) تشمل الأورام الوعائية الحميدة والتوسعات الوعائية والأورام الوعائية الوليدية. قد تكون حمراء أو وردية اللون وتظهر في أي مكان في الجسم. معظمها حميد ولا يتطلب علاجاً إلا إذا كان مزعجاً أو مشكوك في طبيعته.",
+    "description": "آفات الأوعية الدموية",
     "medical_report": {
       "diagnosis": "آفات الأوعية الدموية (Vascular Lesions)",
-      "severity": "منخفضة - حميد",
-      "recommendations": "مراقبة دورية، تجنب الاحتكاك",
-      "treatment": "لا يتطلب علاجاً إلا إذا كان مزعجاً",
-      "follow_up": "مراجعة سنوية"
+      "severity": "منخفضة",
+      "recommendations": "مراقبة دورية"
     }
   },
   {
     "id": "0def5fbe-c76d-426c-ac00-d0c01c560e0c",
     "case_number": 3,
-    "user_id": "X@gmail.com",
-    "user_name": "خالد",
+    "user_id": "heba@test.com",
+    "user_name": "هبة",
     "image_path": "upload_20250718_070640_nodular-basa.jpg",
     "disease": "vasc",
     "disease_english": "Vascular lesions",
     "confidence": 0.9999986886978149,
     "created_at": "2025-07-18T07:06:40.676559",
-    "description": "آفات الأوعية الدموية (Vascular Lesions) تشمل الأورام الوعائية الحميدة والتوسعات الوعائية والأورام الوعائية الوليدية. قد تكون حمراء أو وردية اللون وتظهر في أي مكان في الجسم. معظمها حميد ولا يتطلب علاجاً إلا إذا كان مزعجاً أو مشكوك في طبيعته.",
+    "description": "آفات الأوعية الدموية",
     "medical_report": {
       "diagnosis": "آفات الأوعية الدموية (Vascular Lesions)",
-      "severity": "منخفضة - حميد",
-      "recommendations": "مراقبة دورية، تجنب الاحتكاك",
-      "treatment": "لا يتطلب علاجاً إلا إذا كان مزعجاً",
-      "follow_up": "مراجعة سنوية"
+      "severity": "منخفضة"
     }
   },
   {
     "id": "c2669f00-90ea-4461-bc96-23c1ad71a3e7",
     "case_number": 4,
-    "patient_name": "شعيب",
+    "patient_name": "إسراء",
     "patient_age": 22,
-    "patient_phone": "0915558674",
-    "notes": "ئئئ",
-    "created_by": "a@gmail.com",
+    "patient_phone": "0910000002",
+    "notes": "فحص جلدي شامل",
+    "created_by": "admin@dermascan.com",
     "created_at": "2025-07-20T01:13:23.388006",
     "diagnoses": []
   },
   {
     "id": "352fc396-b498-42f0-9ef6-4a622d4b967c",
     "case_number": 5,
-    "user_id": "m@gmail.com",
-    "user_name": "محمد",
+    "user_id": "heba@test.com",
+    "user_name": "هبة",
     "image_path": "upload_20250720_011827_melanma.jpg",
     "disease": "nv",
     "disease_english": "Melanocytic nevi",
     "confidence": 0.387162983417511,
-    "created_at": "2025-07-20T01:18:33.910521",
-    "description": "الشامات الميلانينية (Melanocytic Nevi) هي آفات جلدية حميدة شائعة تظهر نتيجة تجمع خلايا الميلانين. معظم الناس لديهم عدة شامات طبيعية. الشامات الطبيعية تكون متناسقة الشكل وحدودها واضحة ولونها موحد. لا تتطلب علاجاً إلا إذا كانت مشكوك في طبيعتها.",
-    "medical_report": {
-      "diagnosis": "الشامات الميلانينية (Melanocytic Nevi)",
-      "severity": "منخفضة - حميد",
-      "recommendations": "مراقبة دورية، تجنب التعرض لأشعة الشمس",
-      "treatment": "لا يتطلب علاجاً إلا إذا كان مشكوك في طبيعته",
-      "follow_up": "مراجعة سنوية"
-    },
-    "all_diseases": [
-      {
-        "name": "Melanocytic nevi",
-        "arabic_name": "الشامات الميلانينية",
-        "code": "nv",
-        "probability": 0.387162983417511,
-        "percentage": 38.7162983417511
-      },
-      {
-        "name": "Melanoma",
-        "arabic_name": "سرطان الجلد الميلانيني",
-        "code": "mel",
-        "probability": 0.25548574328422546,
-        "percentage": 25.548574328422546
-      },
-      {
-        "name": "Vascular lesions",
-        "arabic_name": "آفات الأوعية الدموية",
-        "code": "vasc",
-        "probability": 0.20588119328022003,
-        "percentage": 20.588119328022003
-      },
-      {
-        "name": "Benign keratosis-like lesions",
-        "arabic_name": "آفات شبيهة بالتقرن الحميد",
-        "code": "bkl",
-        "probability": 0.1422351598739624,
-        "percentage": 14.22351598739624
-      },
-      {
-        "name": "Basal cell carcinoma",
-        "arabic_name": "سرطان الخلايا القاعدية",
-        "code": "bcc",
-        "probability": 0.008924119174480438,
-        "percentage": 0.8924119174480438
-      },
-      {
-        "name": "Actinic keratoses",
-        "arabic_name": "التقرن الشعاعي",
-        "code": "akiec",
-        "probability": 0.0003108169184997678,
-        "percentage": 0.031081691849976778
-      },
-      {
-        "name": "Dermatofibroma",
-        "arabic_name": "الورم الليفي الجلدي",
-        "code": "df",
-        "probability": 8.481927382675281e-10,
-        "percentage": 8.48192738267528e-08
-      }
-    ]
+    "created_at": "2025-07-20T01:18:33.910521"
   },
   {
     "id": "36a32e34-a0fc-40b4-83be-05bec23a1658",
     "case_number": 6,
-    "user_id": "mm@gmail.com",
-    "user_name": "محمد",
+    "user_id": "esraa@test.com",
+    "user_name": "إسراء",
     "image_path": "upload_20250720_124621_ISIC_0026771.jpg",
     "disease": "nv",
     "disease_english": "Melanocytic nevi",
     "confidence": 0.999893069267273,
-    "created_at": "2025-07-20T12:46:24.608187",
-    "description": "الشامات الميلانينية (Melanocytic Nevi) هي آفات جلدية حميدة شائعة تظهر نتيجة تجمع خلايا الميلانين. معظم الناس لديهم عدة شامات طبيعية. الشامات الطبيعية تكون متناسقة الشكل وحدودها واضحة ولونها موحد. لا تتطلب علاجاً إلا إذا كانت مشكوك في طبيعتها.",
-    "medical_report": {
-      "diagnosis": "الشامات الميلانينية (Melanocytic Nevi)",
-      "severity": "منخفضة - حميد",
-      "recommendations": "مراقبة دورية، تجنب التعرض لأشعة الشمس",
-      "treatment": "لا يتطلب علاجاً إلا إذا كان مشكوك في طبيعته",
-      "follow_up": "مراجعة سنوية"
-    },
-    "all_diseases": [
-      {
-        "name": "Melanocytic nevi",
-        "arabic_name": "الشامات الميلانينية",
-        "code": "nv",
-        "probability": 0.999893069267273,
-        "percentage": 99.9893069267273
-      },
-      {
-        "name": "Melanoma",
-        "arabic_name": "سرطان الجلد الميلانيني",
-        "code": "mel",
-        "probability": 0.0001064335010596551,
-        "percentage": 0.01064335010596551
-      },
-      {
-        "name": "Benign keratosis-like lesions",
-        "arabic_name": "آفات شبيهة بالتقرن الحميد",
-        "code": "bkl",
-        "probability": 4.5787064095748065e-07,
-        "percentage": 4.5787064095748065e-05
-      },
-      {
-        "name": "Actinic keratoses",
-        "arabic_name": "التقرن الشعاعي",
-        "code": "akiec",
-        "probability": 1.120765880102681e-08,
-        "percentage": 1.120765880102681e-06
-      },
-      {
-        "name": "Basal cell carcinoma",
-        "arabic_name": "سرطان الخلايا القاعدية",
-        "code": "bcc",
-        "probability": 6.242345307327923e-09,
-        "percentage": 6.242345307327923e-07
-      },
-      {
-        "name": "Dermatofibroma",
-        "arabic_name": "الورم الليفي الجلدي",
-        "code": "df",
-        "probability": 3.856435136506686e-12,
-        "percentage": 3.856435136506686e-10
-      },
-      {
-        "name": "Vascular lesions",
-        "arabic_name": "آفات الأوعية الدموية",
-        "code": "vasc",
-        "probability": 3.118309782482523e-14,
-        "percentage": 3.118309782482523e-12
-      }
-    ]
+    "created_at": "2025-07-20T12:46:24.608187"
   },
   {
     "id": "145e8fcd-5991-45e3-be74-1c1685daaf24",
     "case_number": 7,
-    "patient_name": "علي محمد",
+    "patient_name": "هبة",
     "patient_age": 25,
-    "patient_phone": "0915603985",
-    "notes": "",
-    "created_by": "alashhab@gmail.com",
+    "patient_phone": "0910000001",
+    "notes": "حالة جلدية عارضة",
+    "created_by": "admin@dermascan.com",
     "created_at": "2025-07-20T12:50:44.927726",
     "diagnoses": [
       {
@@ -403,60 +114,8 @@
         "disease_english": "Melanocytic nevi",
         "disease_arabic": "الشامات الميلانينية",
         "confidence": 0.6288506388664246,
-        "all_diseases": [
-          {
-            "name": "Melanocytic nevi",
-            "arabic_name": "الشامات الميلانينية",
-            "code": "nv",
-            "probability": 0.6288506388664246,
-            "percentage": 62.885063886642456
-          },
-          {
-            "name": "Melanoma",
-            "arabic_name": "سرطان الجلد الميلانيني",
-            "code": "mel",
-            "probability": 0.2866279184818268,
-            "percentage": 28.662791848182678
-          },
-          {
-            "name": "Benign keratosis-like lesions",
-            "arabic_name": "آفات شبيهة بالتقرن الحميد",
-            "code": "bkl",
-            "probability": 0.052196335047483444,
-            "percentage": 5.219633504748344
-          },
-          {
-            "name": "Basal cell carcinoma",
-            "arabic_name": "سرطان الخلايا القاعدية",
-            "code": "bcc",
-            "probability": 0.025123143568634987,
-            "percentage": 2.5123143568634987
-          },
-          {
-            "name": "Actinic keratoses",
-            "arabic_name": "التقرن الشعاعي",
-            "code": "akiec",
-            "probability": 0.006580947432667017,
-            "percentage": 0.6580947432667017
-          },
-          {
-            "name": "Dermatofibroma",
-            "arabic_name": "الورم الليفي الجلدي",
-            "code": "df",
-            "probability": 0.0006210067076608539,
-            "percentage": 0.062100670766085386
-          },
-          {
-            "name": "Vascular lesions",
-            "arabic_name": "آفات الأوعية الدموية",
-            "code": "vasc",
-            "probability": 1.558238399423928e-10,
-            "percentage": 1.558238399423928e-08
-          }
-        ],
         "created_at": "2025-07-20T12:51:04.403727",
-        "notes": "",
-        "created_by": "alashhab@gmail.com"
+        "created_by": "admin@dermascan.com"
       }
     ]
   }
